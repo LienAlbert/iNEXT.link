@@ -1048,10 +1048,8 @@ ggiNEXTbeta.link <- function(output, type = c('B', 'D')){
     
     alpha[alpha == 'Observed_SC(n, alpha)'] = 'Observed'
     alpha[alpha == 'Extrap_SC(2n, alpha)'] = 'Extrapolation'
-    
     gamma[gamma == 'Observed_SC(n, gamma)'] = 'Observed'
     gamma[gamma == 'Extrap_SC(2n, gamma)'] = 'Extrapolation'
-    
     beta[beta == 'Observed_SC(n, alpha)'] = 'Observed'
     beta[beta == 'Extrap_SC(2n, alpha)'] = 'Extrapolation'
     
