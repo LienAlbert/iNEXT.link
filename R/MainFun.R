@@ -120,12 +120,14 @@ ggCompleteness.link <- function(output){
   # Check if the number of unique 'Assemblage' is 8 or less
   if (length(unique(output$Assemblage)) <= 8){
     cbPalette <- rev(c("#999999", "#E69F00", "#56B4E9", "#009E73", 
-                       "#330066", "#CC79A7", "#0072B2", "#D55E00"))
+                      "#330066", "#CC79A7", "#0072B2", "#D55E00"))
   }else{
     # If there are more than 8 assemblages, start with the same predefined color palette
     # Then extend the palette by generating additional colors using the 'ggplotColors' function
     cbPalette <- rev(c("#999999", "#E69F00", "#56B4E9", "#009E73", 
                        "#330066", "#CC79A7", "#0072B2", "#D55E00"))
+    #cbPalette <- rev(c("#999999", "#E69F00", "#56B4E9", "#009E73", 
+    #                   "#330066", "#CC79A7", "red", "blue"))
     cbPalette <- c(cbPalette, ggplotColors(length(unique(output$Assemblage))-8))
   }
   
@@ -878,7 +880,7 @@ estimateD.link = function(data, diversity = 'TD', q = c(0, 1, 2), base = "covera
 #' Chao, A., Thorn, S., Chiu, C.-H., Moyes, F., Hu, K.-H., Chazdon, R. L., Wu, J., Dornelas, M., Zelen??, D., Colwell, R. K., and Magurran, A. E. (2023). Rarefaction and extrapolation with beta diversity under a framework of Hill numbers: the iNEXT.beta3D standardization. To appear in Ecological Monographs.
 #' @export
 
-iNEXTbeta.link = function(data, diversity = 'TD', level = seq(0.5, 1, 0.05),
+iNEXTbeta.link = function(data, diversity = 'TD', level = NULL,
                           q = c(0, 1, 2), nboot = 20, conf = 0.95, 
                           row.tree = NULL, col.tree = NULL, PDtype = 'meanPD', row.distM = NULL, col.distM = NULL,
                           FDtype = "AUC", FDtau = NULL, FDcut_number = 30){
@@ -1043,8 +1045,15 @@ ggiNEXTbeta.link <- function(output, type = c('B', 'D')){
     alpha = lapply(output, function(y) y[["alpha"]]) %>% do.call(rbind,.) %>% rename("Estimate" = "Alpha") %>% mutate(div_type = "Alpha") %>% as_tibble()
     beta =  lapply(output, function(y) y[["beta"]])  %>% do.call(rbind,.) %>% rename("Estimate" = "Beta")  %>% mutate(div_type = "Beta")  %>% as_tibble()
     # beta = beta %>% filter(Method != 'Observed')
-    beta[beta == 'Observed_C(n, alpha)'] = 'Observed'
-    beta[beta == 'Extrap_C(2n, alpha)'] = 'Extrapolation'
+    
+    alpha[alpha == 'Observed_SC(n, alpha)'] = 'Observed'
+    alpha[alpha == 'Extrap_SC(2n, alpha)'] = 'Extrapolation'
+    
+    gamma[gamma == 'Observed_SC(n, gamma)'] = 'Observed'
+    gamma[gamma == 'Extrap_SC(2n, gamma)'] = 'Extrapolation'
+    
+    beta[beta == 'Observed_SC(n, alpha)'] = 'Observed'
+    beta[beta == 'Extrap_SC(2n, alpha)'] = 'Extrapolation'
     
     df = rbind(gamma, alpha, beta)
     for (i in unique(gamma$Order.q)) df$Order.q[df$Order.q == i] = paste0('q = ', i)
@@ -1084,8 +1093,8 @@ ggiNEXTbeta.link <- function(output, type = c('B', 'D')){
     # U = U %>% filter(Method != 'Observed')
     # V = V %>% filter(Method != 'Observed')
     # S = S %>% filter(Method != 'Observed')
-    C[C == 'Observed_C(n, alpha)'] = U[U == 'Observed_C(n, alpha)'] = V[V == 'Observed_C(n, alpha)'] = S[S == 'Observed_C(n, alpha)'] = 'Observed'
-    C[C == 'Extrap_C(2n, alpha)'] = U[U == 'Extrap_C(2n, alpha)'] = V[V == 'Extrap_C(2n, alpha)'] = S[S == 'Extrap_C(2n, alpha)'] = 'Extrapolation'
+    C[C == 'Observed_SC(n, alpha)'] = U[U == 'Observed_SC(n, alpha)'] = V[V == 'Observed_SC(n, alpha)'] = S[S == 'Observed_SC(n, alpha)'] = 'Observed'
+    C[C == 'Extrap_SC(2n, alpha)'] = U[U == 'Extrap_SC(2n, alpha)'] = V[V == 'Extrap_SC(2n, alpha)'] = S[S == 'Extrap_SC(2n, alpha)'] = 'Extrapolation'
     
     df = rbind(C, U, V, S)
     for (i in unique(C$Order.q)) df$Order.q[df$Order.q == i] = paste0('q = ', i)
