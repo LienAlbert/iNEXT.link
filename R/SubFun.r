@@ -1034,6 +1034,7 @@ iNEXTbeta.PDlink <- function(data, level, datatype='abundance', q = c(0, 1, 2),
   
   max_alpha_coverage = F
   
+  
   if(is.null(level)){
     level = seq(0.5,1, 0.025)
   }else{
