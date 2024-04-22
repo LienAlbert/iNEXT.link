@@ -1493,7 +1493,11 @@ iNEXTbeta.PDlink <- function(data, level, datatype='abundance', q = c(0, 1, 2),
                              Dataset = dataset_name,
                              Diversity = PDtype) %>% 
       arrange(Order.q, SC) %>% .[,c(9, 2, 4, 5, 1, 3, 6, 7, 8, 10)] %>% rename("Dissimilarity" = "Estimate")
-
+    
+    #add plot point alpha
+    gamma$Method[gamma$SC == ref_alpha_max] = "Extrap_SC(2n, alpha)"
+    
+    alpha$Method[alpha$SC == ref_alpha_max] = "Extrap_SC(2n, alpha)"
     
     beta$Method[beta$SC == ref_alpha_max] = "Extrap_SC(2n, alpha)"
     
@@ -1505,6 +1509,10 @@ iNEXTbeta.PDlink <- function(data, level, datatype='abundance', q = c(0, 1, 2),
     
     S$Method[S$SC == ref_alpha_max] = "Extrap_SC(2n, alpha)"
     
+    gamma$Method[gamma$SC == ref_alpha] = "Extrap_SC(n, alpha)"
+    
+    alpha$Method[alpha$SC == ref_alpha] = "Extrap_SC(n, alpha)"
+    
     beta$Method[beta$SC == ref_alpha] = "Observed_SC(n, alpha)"
     
     C$Method[C$SC == ref_alpha] = "Observed_SC(n, alpha)"
@@ -1515,6 +1523,35 @@ iNEXTbeta.PDlink <- function(data, level, datatype='abundance', q = c(0, 1, 2),
     
     S$Method[S$SC == ref_alpha] = "Observed_SC(n, alpha)"
     
+    
+    #add plot point gamma
+    gamma$Method[gamma$SC == ref_gamma_max] = "Extrap_SC(2n, gamma)"
+    
+    alpha$Method[alpha$SC == ref_gamma_max] = "Extrap_SC(2n, gamma)"
+    
+    beta$Method[beta$SC == ref_gamma_max] = "Extrap_SC(2n, gamma)"
+    
+    C$Method[C$SC == ref_gamma_max] = "Extrap_SC(2n, gamma)"
+    
+    U$Method[U$SC == ref_gamma_max] = "Extrap_SC(2n, gamma)"
+    
+    V$Method[V$SC == ref_gamma_max] = "Extrap_SC(2n, gamma)"
+    
+    S$Method[S$SC == ref_gamma_max] = "Extrap_SC(2n, gamma)"
+    
+    gamma$Method[gamma$SC == ref_gamma] = "Extrap_SC(n, gamma)"
+    
+    alpha$Method[alpha$SC == ref_gamma] = "Extrap_SC(n, gamma)"
+    
+    beta$Method[beta$SC == ref_gamma] = "Observed_SC(n, gamma)"
+    
+    C$Method[C$SC == ref_gamma] = "Observed_SC(n, gamma)"
+    
+    U$Method[U$SC == ref_gamma] = "Observed_SC(n, gamma)"
+    
+    V$Method[V$SC == ref_gamma] = "Observed_SC(n, gamma)"
+    
+    S$Method[S$SC == ref_gamma] = "Observed_SC(n, gamma)"
     
     list(gamma = gamma, alpha = alpha, beta = beta, `1-C` = C, `1-U` = U, `1-V` = V, `1-S` = S)
   }
