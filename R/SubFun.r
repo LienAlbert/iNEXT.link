@@ -1030,6 +1030,8 @@ get.netphydiv_iNE <- function(data,q,B,row.tree = NULL,col.tree = NULL,conf, kno
 iNEXTbeta.PDlink <- function(data, level, datatype='abundance', q = c(0, 1, 2),
                              nboot = 20, conf = 0.95,
                              row.tree = NULL,col.tree = NULL, PDtype){
+  
+  
   max_alpha_coverage = F
 
   if(datatype=='abundance'){
@@ -1051,7 +1053,7 @@ iNEXTbeta.PDlink <- function(data, level, datatype='abundance', q = c(0, 1, 2),
 
     #data
     if (datatype=='abundance') {
-
+        
       n = sum(data)
       data_gamma = rowSums(data)
       data_gamma = data_gamma[data_gamma>0]
@@ -1064,11 +1066,12 @@ iNEXTbeta.PDlink <- function(data, level, datatype='abundance', q = c(0, 1, 2),
       ref_gamma_max = iNEXT.3D:::Coverage(data_alpha, n*2, datatype = 'abundance')
 
       level = level[level<1]
-      # level = c(level, ref_gamma, ref_alpha, ref_alpha_max, ref_gamma_max) %>% sort %>% unique
+      level = c(level, ref_gamma, ref_alpha, ref_alpha_max, ref_gamma_max) %>% sort %>% unique
 
       m_gamma = sapply(level, function(i) coverage_to_size(x = data_gamma, C = i, datatype='abundance'))
       m_alpha = sapply(level, function(i) coverage_to_size(data_alpha, i, datatype='abundance'))
     }
+    
 
     if (datatype=='abundance') {
       ### 1. aL_table_gamma
@@ -1485,25 +1488,25 @@ iNEXTbeta.PDlink <- function(data, level, datatype='abundance', q = c(0, 1, 2),
       arrange(Order.q, SC) %>% .[,c(9, 2, 4, 5, 1, 3, 6, 7, 8, 10)] %>% rename("Dissimilarity" = "Estimate")
 
     
-    beta$Method[beta$SC == ref_alpha_max] = "Extrap_C(2n, alpha)"
+    beta$Method[beta$SC == ref_alpha_max] = "Extrap_SC(2n, alpha)"
     
-    C$Method[C$SC == ref_alpha_max] = "Extrap_C(2n, alpha)"
+    C$Method[C$SC == ref_alpha_max] = "Extrap_SC(2n, alpha)"
     
-    U$Method[U$SC == ref_alpha_max] = "Extrap_C(2n, alpha)"
+    U$Method[U$SC == ref_alpha_max] = "Extrap_SC(2n, alpha)"
     
-    V$Method[V$SC == ref_alpha_max] = "Extrap_C(2n, alpha)"
+    V$Method[V$SC == ref_alpha_max] = "Extrap_SC(2n, alpha)"
     
-    S$Method[S$SC == ref_alpha_max] = "Extrap_C(2n, alpha)"
+    S$Method[S$SC == ref_alpha_max] = "Extrap_SC(2n, alpha)"
     
-    beta$Method[beta$SC == ref_alpha] = "Observed_C(n, alpha)"
+    beta$Method[beta$SC == ref_alpha] = "Observed_SC(n, alpha)"
     
-    C$Method[C$SC == ref_alpha] = "Observed_C(n, alpha)"
+    C$Method[C$SC == ref_alpha] = "Observed_SC(n, alpha)"
     
-    U$Method[U$SC == ref_alpha] = "Observed_C(n, alpha)"
+    U$Method[U$SC == ref_alpha] = "Observed_SC(n, alpha)"
     
-    V$Method[V$SC == ref_alpha] = "Observed_C(n, alpha)"
+    V$Method[V$SC == ref_alpha] = "Observed_SC(n, alpha)"
     
-    S$Method[S$SC == ref_alpha] = "Observed_C(n, alpha)"
+    S$Method[S$SC == ref_alpha] = "Observed_SC(n, alpha)"
     
     
     list(gamma = gamma, alpha = alpha, beta = beta, `1-C` = C, `1-U` = U, `1-V` = V, `1-S` = S)
