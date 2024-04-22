@@ -1509,9 +1509,9 @@ iNEXTbeta.PDlink <- function(data, level, datatype='abundance', q = c(0, 1, 2),
     
     S$Method[S$SC == ref_alpha_max] = "Extrap_SC(2n, alpha)"
     
-    gamma$Method[gamma$SC == ref_alpha] = "Extrap_SC(n, alpha)"
+    gamma$Method[gamma$SC == ref_alpha] = "Observed_SC(n, alpha)"
     
-    alpha$Method[alpha$SC == ref_alpha] = "Extrap_SC(n, alpha)"
+    alpha$Method[alpha$SC == ref_alpha] = "Observed_SC(n, alpha)"
     
     beta$Method[beta$SC == ref_alpha] = "Observed_SC(n, alpha)"
     
@@ -1539,9 +1539,9 @@ iNEXTbeta.PDlink <- function(data, level, datatype='abundance', q = c(0, 1, 2),
     
     S$Method[S$SC == ref_gamma_max] = "Extrap_SC(2n, gamma)"
     
-    gamma$Method[gamma$SC == ref_gamma] = "Extrap_SC(n, gamma)"
+    gamma$Method[gamma$SC == ref_gamma] = "Observed_SC(n, gamma)"
     
-    alpha$Method[alpha$SC == ref_gamma] = "Extrap_SC(n, gamma)"
+    alpha$Method[alpha$SC == ref_gamma] = "Observed_SC(n, gamma)"
     
     beta$Method[beta$SC == ref_gamma] = "Observed_SC(n, gamma)"
     
