@@ -1069,8 +1069,8 @@ iNEXTbeta.PDlink <- function(data, level, datatype='abundance', q = c(0, 1, 2),
       ref_gamma = iNEXT.3D:::Coverage(data_gamma, n, datatype = 'abundance')
       ref_alpha = iNEXT.3D:::Coverage(data_alpha, n, datatype = 'abundance')
 
-      ref_alpha_max = iNEXT.3D:::Coverage(data_gamma, n*2, datatype = 'abundance')
-      ref_gamma_max = iNEXT.3D:::Coverage(data_alpha, n*2, datatype = 'abundance')
+      ref_alpha_max = iNEXT.3D:::Coverage(data_alpha, n*2, datatype = 'abundance')
+      ref_gamma_max = iNEXT.3D:::Coverage(data_gamma, n*2, datatype = 'abundance')
 
       level = level[level<1]
       level = c(level, ref_gamma, ref_alpha, ref_alpha_max, ref_gamma_max) %>% sort %>% unique
