@@ -989,7 +989,14 @@ iNEXTbeta.link = function(data, diversity = 'TD', level = NULL,
     dissimilarity <- iNEXTbeta3D(data = combined_list, diversity = 'FD', level = level, datatype = datatype,
                                  q = q ,nboot = nboot, conf = conf, FDdistM = distM, FDcut_number = FDcut_number)
   }
-
+  
+  dissimilarity[[1]]$gamma$Dataset <- paste(names(combined_list[[1]]),collapse = " v.s. ")
+  dissimilarity[[1]]$alpha$Dataset <- paste(names(combined_list[[1]]),collapse = " v.s. ")
+  dissimilarity[[1]]$beta$Dataset <- paste(names(combined_list[[1]]),collapse = " v.s. ")
+  dissimilarity[[1]]$`1-C`$Dataset <- paste(names(combined_list[[1]]),collapse = " v.s. ")
+  dissimilarity[[1]]$`1-U`$Dataset <- paste(names(combined_list[[1]]),collapse = " v.s. ")
+  dissimilarity[[1]]$`1-V`$Dataset <- paste(names(combined_list[[1]]),collapse = " v.s. ")
+  dissimilarity[[1]]$`1-S`$Dataset <- paste(names(combined_list[[1]]),collapse = " v.s. ")
   return(dissimilarity)
 }
 
