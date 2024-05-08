@@ -308,6 +308,10 @@ iNEXT.link <- function(data, diversity = 'TD', q = c(0,1,2), size = NULL,
   }
   
   # class(res) = "iNEXT3D"
+  names(res[[1]])[1] <- "Dataset"
+  names(res[[2]]$size_based)[1] <- "Dataset"
+  names(res[[2]]$coverage_based)[1] <- "Dataset"
+  names(res[[3]])[1] <- "Dataset"
   return(res)
 }
 
@@ -1249,6 +1253,17 @@ Spec.link <- function(data, q = seq(0, 2, 0.2),
     if (method == "Estimated") {
       Spec <- lapply(Spec, function(x) x %>% mutate('SC' = SC))
     }
+    
+    names(Spec[[1]])[8:9] <- c("Dataset", "Measure")
+    names(Spec[[2]])[8:9] <- c("Dataset", "Measure")
+    names(Spec[[3]])[8:9] <- c("Dataset", "Measure")
+    names(Spec[[4]])[8:9] <- c("Dataset", "Measure")
+    names(Spec[[5]])[8:9] <- c("Dataset", "Measure")
+    Spec[[1]]$Method <- NULL
+    Spec[[2]]$Method <- NULL
+    Spec[[3]]$Method <- NULL
+    Spec[[4]]$Method <- NULL
+    Spec[[5]]$Method <- NULL
     
     return(Spec)
 
