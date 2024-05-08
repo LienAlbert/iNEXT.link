@@ -1406,7 +1406,7 @@ ggSpec.link = function (output)
   classdata = cbind(do.call(rbind, output))
   
   # Check if the number of unique 'Network' is 8 or less
-  if (length(unique(classdata$Network)) <= 8){
+  if (length(unique(classdata$Dataset)) <= 8){
     cbPalette <- rev(c("#999999", "#E69F00", "#56B4E9", "#009E73", 
                        "#330066", "#CC79A7", "#0072B2", "#D55E00"))
   }else{
@@ -1414,12 +1414,12 @@ ggSpec.link = function (output)
     # Then extend the palette by generating additional colors using the 'ggplotColors' function
     cbPalette <- rev(c("#999999", "#E69F00", "#56B4E9", "#009E73", 
                        "#330066", "#CC79A7", "#0072B2", "#D55E00"))
-    cbPalette <- c(cbPalette, ggplotColors(length(unique(classdata$Network))-8))
+    cbPalette <- c(cbPalette, ggplotColors(length(unique(classdata$Dataset))-8))
   }
   
   fig = ggplot(classdata, aes(x = Order.q, y = Specialization, colour = Dataset)) +
     geom_line(size = 1.2) + 
-    geom_ribbon(aes(ymin = Spec.LCL, ymax = Spec.UCL, fill = Network), alpha = 0.2, linetype = 0) +
+    geom_ribbon(aes(ymin = Spec.LCL, ymax = Spec.UCL, fill = Dataset), alpha = 0.2, linetype = 0) +
     scale_colour_manual(values = cbPalette) + 
     scale_fill_manual(values = cbPalette) +
     labs(x = "Order q", y = "Specialization") + 
