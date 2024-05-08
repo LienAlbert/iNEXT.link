@@ -366,6 +366,11 @@ iNEXT.link <- function(data, diversity = 'TD', q = c(0,1,2), size = NULL,
 #' @export
 ggiNEXT.link <- function(output, type = c(1,2,3), facet.var = "Assemblage", color.var = "Order.q"){
   
+  names(output[[1]])[1] <- "Assemblage"
+  names(output[[2]]$size_based)[1] <- "Assemblage"
+  names(output[[2]]$coverage_based)[1] <- "Assemblage"
+  names(output[[3]])[1] <- "Assemblage"
+  
   if (names(output)[1] == 'TDInfo') {
     diversity = 'TD'
   } else if (names(output)[1] == "PDInfo") {
