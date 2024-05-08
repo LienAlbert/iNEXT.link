@@ -96,6 +96,7 @@ Completeness.link <- function(data, q = seq(0, 2, 0.2), nboot = 30, conf = 0.95)
     as.matrix(tab)%>%c()}
   )
   res = iNEXT.4steps::Completeness(data = data_long, q = q, datatype = datatype, nboot = nboot, conf = conf)
+  names(res)[6] <- "Dataset"
   return(res)
 }
 
