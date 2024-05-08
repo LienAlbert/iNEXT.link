@@ -1298,7 +1298,7 @@ Spec.link <- function(data, q = seq(0, 2, 0.2),
         return(res[[1]])
       })%>%do.call("rbind",.)
 
-      each_class%>%mutate(class = paste0("1-E",e))
+      each_class%>%mutate(Measure = paste0("1-E",e))
     })
 
 
@@ -1432,7 +1432,7 @@ ggSpec.link = function (output)
           text = element_text(size = 16), plot.margin = unit(c(5.5, 5.5, 5.5, 5.5), "pt")) + 
     guides(linetype = guide_legend(keywidth = 2.5))
   if (length(output) != 1)
-    fig = fig + facet_wrap(~class) + 
+    fig = fig + facet_wrap(~Measure) + 
     theme(strip.text.x = element_text(size = 12, colour = "purple", face = "bold"))
   
   return(fig)
