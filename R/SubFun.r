@@ -1,3 +1,74 @@
+check.size <- function(data, datatype, size, endpoint, knots) {
+  
+  if (length(knots) != length(data)) knots <- rep(knots,length(data))
+  
+  if (is.null(size)) {
+    
+    if (is.null(endpoint)) {
+      
+      if (datatype == "abundance") {
+        endpoint <- sapply(data, function(x) 2*sum(x))
+      } else if (datatype == "incidence_freq"){
+        endpoint <- sapply(data, function(x) 2*x[1])
+      } else if (datatype == "incidence_raw"){
+        endpoint <- sapply(data, function(x) 2*ncol(x))
+      }
+      
+    } else {
+      
+      if(length(endpoint) != length(data)){
+        endpoint <- rep(endpoint, length(data))
+      }
+      
+    }
+    
+    size <- lapply(1:length(data), function(i){
+      
+      if (datatype == "abundance") {
+        ni <- sum(data[[i]])
+      } else if (datatype == "incidence_freq") {
+        ni <- data[[i]][1]
+      } else if (datatype == "incidence_raw") {
+        ni <- ncol(data[[i]])
+      }
+      
+      if(endpoint[i] <= ni){
+        mi <- floor(seq(1,endpoint[i], length.out = knots[i]))
+      }else{
+        mi <- floor(c(seq(1, ni, length.out = floor(knots[i]/2)), seq(ni+1, endpoint[i], length.out = knots[i]-floor(knots[i]/2))))
+      }
+      
+      if(sum(mi < 0) > 0) stop("Sample size (or number of sampling units) cannot be a negative value.", call. = FALSE)
+      unique(mi)
+    })
+    
+  } else {
+    
+    if (inherits(size, c("numeric", "integer", "double"))) {
+      size <- list(size = size)
+    }
+    
+    if (length(size) != length(data)) size <- lapply(1:length(data), function(x) size[[1]])
+    size <- lapply(1:length(data),function(i){
+      if(datatype == "abundance") {
+        ni <- sum(data[[i]])
+      } else if (datatype == "incidence_freq") {
+        ni <- data[[i]][1]
+      } else if(datatype == "incidence_raw"){
+        ni <- ncol(data[[i]])
+      }
+      
+      if ( (sum(size[[i]] == ni) == 0) & (sum(size[[i]] > ni) != 0) & (sum(size[[i]] < ni) != 0) ) 
+        mi <- sort(c(ni,size[[i]])) else mi <- sort(size[[i]])
+        
+        if(sum(mi < 0) > 0) stop("Sample size (or number of sampling units) cannot be a negative value.", call. = FALSE)
+        unique(mi)
+    })
+  }
+  
+  
+  return(size)
+}
 ready4beta <- function(x){
   ## transform 2d matrix to vector
   ## expand each assemblage to the union of all networks
