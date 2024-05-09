@@ -292,7 +292,7 @@ iNEXT.link <- function(data, diversity = 'TD', q = c(0,1,2), size = NULL,
         size[[i]] <- unique(c(size_check[[i]], new_size[[i]]))
       }
       INEXT_est_q <- iNEXT.3D::iNEXT3D(data_long, diversity = 'TD', q = q[q!=0],conf = conf,
-                                       nboot = nboot, knots = knots, endpoint = endpoint, size = size)
+                                       nboot = nboot, knots = NULL, endpoint = endpoint, size = size)
       INEXT_est <- INEXT_est_0
       INEXT_est[[2]]$coverage_based <- rbind(INEXT_est_0[[2]]$coverage_based, INEXT_est_q[[2]]$coverage_based)
       INEXT_est[[2]]$coverage_based <- INEXT_est[["TDiNextEst"]][["coverage_based"]][order(INEXT_est[["TDiNextEst"]][["coverage_based"]]$Assemblage),]
@@ -305,8 +305,8 @@ iNEXT.link <- function(data, diversity = 'TD', q = c(0,1,2), size = NULL,
       for(i in 1:length(data)){
         size[[i]] <- unique(c(size_check[[i]], new_size[[i]]))
       }
-      INEXT_est_q <- iNEXT.3D::iNEXT3D(data_long, diversity = 'TD', q = q,conf = conf,
-                                       nboot = nboot, knots = knots, endpoint = endpoint, size = size)
+      INEXT_est <- iNEXT.3D::iNEXT3D(data_long, diversity = 'TD', q = q,conf = conf,
+                                     nboot = nboot, knots = knots, endpoint = endpoint, size = size)
     }
     
     res[[1]] = datainfo
