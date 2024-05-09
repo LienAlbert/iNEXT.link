@@ -318,20 +318,110 @@ iNEXT.link <- function(data, diversity = 'TD', q = c(0,1,2), size = NULL,
 
     if(!is.null(row.tree)){row.tree$tip.label = gsub('\\.', '_',row.tree$tip.label)}
     if(!is.null(col.tree)){col.tree$tip.label = gsub('\\.', '_',col.tree$tip.label)}
-    res = iNEXTPDlink(data, q = q, size = size,
-                      endpoint = endpoint, knots = knots, conf = conf,
-                      nboot = nboot,col.tree = col.tree,row.tree = row.tree, type = PDtype)
+    
+    if(0 %in% q){
+      INEXT_est_0 <- iNEXTPDlink(data, q = q, size = size,
+                                 endpoint = endpoint, knots = knots, conf = conf,
+                                 nboot = nboot,col.tree = col.tree,row.tree = row.tree, type = PDtype)
+      INEXT_est_0[[2]]$coverage_based <- INEXT_est_0[[2]]$coverage_based[INEXT_est_0[[2]]$coverage_based$Order.q == 0,]
+      
+      asy_size <- sapply(1:length(data) ,function(i) coverage_to_size(data[[i]], 0.999, datatype = "abundance"))
+      new_size <- lapply(1:length(data) ,function(i) round(seq(2*sum(data[[i]]),asy_size[i], length = 5)))
+      size_check <-  check.size(data, datatype="abundance", size =size, endpoint=endpoint, knots=knots)
+      size <- list()
+      for(i in 1:length(data)){
+        size[[i]] <- unique(c(size_check[[i]], new_size[[i]]))
+      }
+      INEXT_est_q <- iNEXTPDlink(data, q = q[q!=0], size = size,
+                                 endpoint = endpoint, knots = knots, conf = conf,
+                                 nboot = nboot,col.tree = col.tree,row.tree = row.tree, type = PDtype)
+      INEXT_est <- INEXT_est_0
+      INEXT_est[[2]]$coverage_based <- rbind(INEXT_est_0[[2]]$coverage_based, INEXT_est_q[[2]]$coverage_based)
+      INEXT_est[[2]]$coverage_based <- INEXT_est[["PDiNextEst"]][["coverage_based"]][order(INEXT_est[["PDiNextEst"]][["coverage_based"]]$Assemblage),]
+    }else{
+      
+      asy_size <- sapply(1:length(data) ,function(i) coverage_to_size(data[[i]], 0.999, datatype = "abundance"))
+      new_size <- lapply(1:length(data) ,function(i) round(seq(2*sum(data[[i]]),asy_size[i], length = 5)))
+      size_check <-  check.size(data, datatype="abundance", size =size, endpoint=endpoint, knots=knots)
+      size <- list()
+      for(i in 1:length(data)){
+        size[[i]] <- unique(c(size_check[[i]], new_size[[i]]))
+      }
+      INEXT_est <- iNEXTPDlink(data, q = q[q!=0], size = size,
+                               endpoint = endpoint, knots = knots, conf = conf,
+                               nboot = nboot,col.tree = col.tree,row.tree = row.tree, type = PDtype)
+    }
+    res = INEXT_est
 
   }else if (diversity == "FD" & FDtype == "tau_values") {
-
-    res = iNEXTlinkFD(data, q = q, size = size,
-                      endpoint = endpoint, knots = knots, conf = conf,
-                      nboot = nboot, nT = nT, row.distM = row.distM, col.distM = col.distM, threshold = FDtau)
+    if(0 %in% q){
+      INEXT_est_0 <- iNEXTlinkFD(data, q = q, size = size,
+                                 endpoint = endpoint, knots = knots, conf = conf,
+                                 nboot = nboot, nT = nT, row.distM = row.distM, col.distM = col.distM, threshold = FDtau)
+      INEXT_est_0[[2]]$coverage_based <- INEXT_est_0[[2]]$coverage_based[INEXT_est_0[[2]]$coverage_based$Order.q == 0,]
+      
+      asy_size <- sapply(1:length(data) ,function(i) coverage_to_size(data[[i]], 0.999, datatype = "abundance"))
+      new_size <- lapply(1:length(data) ,function(i) round(seq(2*sum(data[[i]]),asy_size[i], length = 5)))
+      size_check <-  check.size(data, datatype="abundance", size =size, endpoint=endpoint, knots=knots)
+      size <- list()
+      for(i in 1:length(data)){
+        size[[i]] <- unique(c(size_check[[i]], new_size[[i]]))
+      }
+      INEXT_est_q <- iNEXTlinkFD(data, q = q[q!=0], size = size,
+                                 endpoint = endpoint, knots = knots, conf = conf,
+                                 nboot = nboot, nT = nT, row.distM = row.distM, col.distM = col.distM, threshold = FDtau)
+      INEXT_est <- INEXT_est_0
+      INEXT_est[[2]]$coverage_based <- rbind(INEXT_est_0[[2]]$coverage_based, INEXT_est_q[[2]]$coverage_based)
+      INEXT_est[[2]]$coverage_based <- INEXT_est[["FDiNextEst"]][["coverage_based"]][order(INEXT_est[["FDiNextEst"]][["coverage_based"]]$Assemblage),]
+    }else{
+      
+      asy_size <- sapply(1:length(data) ,function(i) coverage_to_size(data[[i]], 0.999, datatype = "abundance"))
+      new_size <- lapply(1:length(data) ,function(i) round(seq(2*sum(data[[i]]),asy_size[i], length = 5)))
+      size_check <-  check.size(data, datatype="abundance", size =size, endpoint=endpoint, knots=knots)
+      size <- list()
+      for(i in 1:length(data)){
+        size[[i]] <- unique(c(size_check[[i]], new_size[[i]]))
+      }
+      INEXT_est <- iNEXTlinkAUC(data, q = q, size = size,
+                                endpoint = endpoint, knots = knots, conf = conf,
+                                nboot = nboot, nT = nT, row.distM = row.distM, col.distM = col.distM)
+    }
+    res = INEXT_est
   }
   else if (diversity == "FD" & FDtype == "AUC") {
-    res = iNEXTlinkAUC(data, q = q, size = size,
-                       endpoint = endpoint, knots = knots, conf = conf,
-                       nboot = nboot, nT = nT, row.distM = row.distM, col.distM = col.distM)
+    if(0 %in% q){
+      INEXT_est_0 <- iNEXTlinkAUC(data, q = q, size = size,
+                                  endpoint = endpoint, knots = knots, conf = conf,
+                                  nboot = nboot, nT = nT, row.distM = row.distM, col.distM = col.distM)
+      INEXT_est_0[[2]]$coverage_based <- INEXT_est_0[[2]]$coverage_based[INEXT_est_0[[2]]$coverage_based$Order.q == 0,]
+      
+      asy_size <- sapply(1:length(data) ,function(i) coverage_to_size(data[[i]], 0.999, datatype = "abundance"))
+      new_size <- lapply(1:length(data) ,function(i) round(seq(2*sum(data[[i]]),asy_size[i], length = 5)))
+      size_check <-  check.size(data, datatype="abundance", size =size, endpoint=endpoint, knots=knots)
+      size <- list()
+      for(i in 1:length(data)){
+        size[[i]] <- unique(c(size_check[[i]], new_size[[i]]))
+      }
+      INEXT_est_q <- iNEXTlinkAUC(data, q = q[q!=0], size = size,
+                                  endpoint = endpoint, knots = knots, conf = conf,
+                                  nboot = nboot, nT = nT, row.distM = row.distM, col.distM = col.distM)
+      INEXT_est <- INEXT_est_0
+      INEXT_est[[2]]$coverage_based <- rbind(INEXT_est_0[[2]]$coverage_based, INEXT_est_q[[2]]$coverage_based)
+      INEXT_est[[2]]$coverage_based <- INEXT_est[["FDiNextEst"]][["coverage_based"]][order(INEXT_est[["FDiNextEst"]][["coverage_based"]]$Assemblage),]
+    }else{
+      
+      asy_size <- sapply(1:length(data) ,function(i) coverage_to_size(data[[i]], 0.999, datatype = "abundance"))
+      new_size <- lapply(1:length(data) ,function(i) round(seq(2*sum(data[[i]]),asy_size[i], length = 5)))
+      size_check <-  check.size(data, datatype="abundance", size =size, endpoint=endpoint, knots=knots)
+      size <- list()
+      for(i in 1:length(data)){
+        size[[i]] <- unique(c(size_check[[i]], new_size[[i]]))
+      }
+      INEXT_est <- iNEXTlinkAUC(data, q = q, size = size,
+                                endpoint = endpoint, knots = knots, conf = conf,
+                                nboot = nboot, nT = nT, row.distM = row.distM, col.distM = col.distM)
+    }
+    res = INEXT_est
   }
   
   # class(res) = "iNEXT3D"
