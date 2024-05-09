@@ -283,7 +283,7 @@ iNEXT.link <- function(data, diversity = 'TD', q = c(0,1,2), size = NULL,
       INEXT_est <- iNEXT.3D::iNEXT3D(data_long, diversity = 'TD', q = q,conf = conf,
                                      nboot = nboot, knots = knots, endpoint = endpoint, size = size)
       INEXT_est[[2]]$coverage_based[INEXT_est[[2]]$coverage_based$Order.q == 0,] <- NULL
-      test <- estimateD.link(beetles_plotA)
+      test <- estimateD.link(data)
       Cmax <- min(test$SC)
       which_data <- unique(test$Assemblage[test$SC == Cmax])
       max_size <- coverage_to_size(data[[which_data]], Cmax, datatype = "abundance")
