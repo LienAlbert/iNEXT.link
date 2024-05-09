@@ -280,6 +280,9 @@ iNEXT.link <- function(data, diversity = 'TD', q = c(0,1,2), size = NULL,
       as.matrix(tab)%>%c()}
     )
     if(0 %in% q){
+      INEXT_est <- iNEXT.3D::iNEXT3D(data_long, diversity = 'TD', q = q,conf = conf,
+                                     nboot = nboot, knots = knots, endpoint = endpoint, size = size)
+      INEXT_est[[2]]$coverage_based[INEXT_est[[2]]$coverage_based$Order.q == 0,] <- NULL
       test <- estimateD.link(beetles_plotA)
       Cmax <- min(test$SC)
       which_data <- unique(test$Assemblage[test$SC == Cmax])
@@ -290,14 +293,12 @@ iNEXT.link <- function(data, diversity = 'TD', q = c(0,1,2), size = NULL,
       }else{
         size = size
       }
+      
       INEXT_est_0 <- iNEXT.3D::iNEXT3D(data_long, diversity = 'TD', q = 0,conf = conf,
                                        nboot = nboot, knots = knots, endpoint = endpoint, size = size)
-      INEXT_est_q <- iNEXT.3D::iNEXT3D(data_long, diversity = 'TD', q = subset(q, q!=0),conf = conf,
-                                       nboot = nboot, knots = knots, endpoint = endpoint, size = size)
-      INEXT_est[[1]] <- rbind(INEXT_est_0[[1]], INEXT_est_q[[1]])
-      INEXT_est[[2]]$size_based <- rbind(INEXT_est_0[[2]]$size_based, INEXT_est_q[[2]]$size_based)
-      INEXT_est[[2]]$coverage_based <- rbind(INEXT_est_0[[2]]$coverage_based, INEXT_est_q[[2]]$coverage_based)
-      INEXT_est[[3]] <- rbind(INEXT_est_0[[3]], INEXT_est_q[[3]])
+     
+      INEXT_est[[2]]$coverage_based <- rbind(INEXT_est_0[[2]]$coverage_based, INEXT_est[[2]]$coverage_based)
+      
     }else{
       INEXT_est <- iNEXT.3D::iNEXT3D(data_long, diversity = 'TD', q = q,conf = conf,
                                      nboot = nboot, knots = knots, endpoint = endpoint, size = size)
