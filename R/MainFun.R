@@ -1376,6 +1376,10 @@ Spec.link <- function(data, q = seq(0, 2, 0.2),
       Spec <- lapply(Spec, function(x) x %>% mutate('SC' = SC))
     }
     
+    for(i in 1:5){
+      Spec[[i]][,4:5] <- Spec[[i]][,c(5,4)]
+      names(Spec[[i]])[4:5] <- c("Spec.LCL", "Spec.UCL")
+    }
     names(Spec[[1]])[8:9] <- c("Dataset", "Measure")
     names(Spec[[2]])[8:9] <- c("Dataset", "Measure")
     names(Spec[[3]])[8:9] <- c("Dataset", "Measure")
