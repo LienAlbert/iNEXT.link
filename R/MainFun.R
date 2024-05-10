@@ -1357,9 +1357,9 @@ Spec.link <- function(data, q = seq(0, 2, 0.2),
         res['Coverage'] = NULL
         res = lapply(res, function(each_class){
           each_class%>%
-            mutate(Evenness = 1-Evenness, Even.LCL = 1-Even.UCL, Even.UCL = 1-Even.LCL) %>% 
+            mutate(Evenness = 1-Evenness, Even.LCL = 1-Even.LCL, Even.UCL = 1-Even.UCL) %>% 
             select(-Assemblage)%>%
-            rename('Specialization'='Evenness', 'Spec.LCL' ='Even.LCL', 'Spec.UCL' ='Even.UCL')%>%
+            rename('Specialization'='Evenness', 'Spec.LCL' ='Even.UCL', 'Spec.UCL' ='Even.LCL')%>%
             mutate(Network = names(long)[[i]])
         })
         # if(method == "Observed") index = 1
