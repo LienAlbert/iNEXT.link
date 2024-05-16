@@ -423,7 +423,8 @@ iNEXT.link <- function(data, diversity = 'TD', q = c(0,1,2), size = NULL,
                                 nboot = nboot, nT = nT, row.distM = row.distM, col.distM = col.distM)
     }
     res = INEXT_est
-    res[[3]] <- DataInfo.link(data, diversity = 'FD', row.distM = row.distM, col.distM = col.distM)
+    res[[1]] <- DataInfo.link(data, diversity = 'FD', row.distM = row.distM, col.distM = col.distM)
+    names(res[[3]])[c(2:4,6:7)] <- c("qiFD", "FD_obs", "FD_asy", "qiFD.LCL", "qiFD.UCL")
   }
   
   # class(res) = "iNEXT3D"
