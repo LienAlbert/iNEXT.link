@@ -352,6 +352,7 @@ iNEXT.link <- function(data, diversity = 'TD', q = c(0,1,2), size = NULL,
                                nboot = nboot,col.tree = col.tree,row.tree = row.tree, type = PDtype)
     }
     res = INEXT_est
+    names(res[[3]])[c(2:4,6:7)] <- c("qiPD", "PD_obs", "PD_asy", "qiPD.LCL", "qiPD.UCL")
 
   }else if (diversity == "FD" & FDtype == "tau_values") {
     if(0 %in% q){
@@ -422,6 +423,7 @@ iNEXT.link <- function(data, diversity = 'TD', q = c(0,1,2), size = NULL,
                                 nboot = nboot, nT = nT, row.distM = row.distM, col.distM = col.distM)
     }
     res = INEXT_est
+    res[[3]] <- DataInfo.link(data, diversity = 'FD', row.distM = row.distM, col.distM = col.distM)
   }
   
   # class(res) = "iNEXT3D"
