@@ -41,7 +41,7 @@ For the former adaption, the iNEXT.link methodology integrates the following fou
 
 **Step 1: Assessment of network completeness profiles** 
 
-The sample completeness of a network is characterized by profile that depicts the sample completeness (developed in Chiu et al. 2023) with respect to an order q ≥ 0. When q = 0, the completeness measure reduces to (an upper bound) of the proportion of the observed interaction richness relative to an estimated interaction richness. When q = 1, the completeness measure reduces to the network-version sample coverage (the proportion of the total number of interaction events that belong to detected ones). When q ≥ 2, the completeness measure is disproportionally sensitive to highly frequent interactions. The proposed profile allows for tuning the effect of interaction frequency on the sample completeness. For a complete network (i.e., there are no undetected interactions), the estimated sample completeness profile will be a horizontal line at the level of unity for all orders of q  0. In contrast, for an incomplete network, the sample completeness profile will be an increasing function of order q.
+The sample completeness of a network is characterized by profile that depicts the sample completeness (developed in Chiu et al. 2023) with respect to an order q ≥ 0. When q = 0, the completeness measure reduces to (an upper bound) of the proportion of the observed interaction richness relative to an estimated interaction richness. When q = 1, the completeness measure reduces to the network-version sample coverage (the proportion of the total number of interaction events that belong to detected ones). When q ≥ 2, the completeness measure is disproportionally sensitive to highly frequent interactions. The proposed profile allows for tuning the effect of interaction frequency on the sample completeness. For a complete network (i.e., there are no undetected interactions), the estimated sample completeness profile will be a horizontal line at the level of unity for all orders of q ≥ 0. In contrast, for an incomplete network, the sample completeness profile will be an increasing function of order q.
 
 **STEP 2. Sample-size- or size-based rarefaction and extrapolation analysis with 3D network diversity for q = 0, 1, and 2, and the asymptotic network diversity profile. Here “size” means the number of interaction events.**
 
@@ -106,34 +106,48 @@ library(iNEXT.link)
 
 There are twelve main functions in this package:
 
-## Functions for Single community:
+Two functions for non-asymptotic analysis with graphical displays:
 
 - **iNEXT.link** Computes rarefaction/extrapolation taxonomic, phylogenetic, and functional network diversity estimates for q = 0, 1 and 2 for rarefied and extrapolated samples at specified sample sizes and sample coverage/completeness estimates.
 
-- **DataInfo.link** provides basic data information
-    
+- **ggiNEXT.link** visualizes the output from the function `iNEXT.link`
+
+
+
+Two functions for point estimation and basic data information
+
 - **estimateD.link** computes 3D network diversity of q = 0, 1 and 2 with a particular user-specified level of sample size or sample coverage/completeness values.
-    
+
+- **DataInfo.link** provides basic data information based on the observed data.
+
+
+
+Two functions for asymptotic analysis with graphical displays:
+
 - **ObsAsy.link** computes observed and asymptotic network diversity of order q between 0 and 2 (in increments of 0.2) for 3D network diversity; it also computes observed and asymptotic qiPD for specified reference times, and observed and asymptotic qiFD for specified threshold levels.
-
-- **Completeness.link** calculates estimated sample completeness with order q. 
-
-- **Spec.link** computes standardized specialization estimation under specified sample coverage(or observed) with order q.
-
-## Function for Multi-community:
-
-- **iNEXTbeta.link** computes standardized gamma, alpha, beta network diversity, and four dissimilarity-turnover indices for three dimensions: taxonomic, phylogenetic and functional diversity at specified sample coverage.
-
-
-## Functions for Visualizing Results:
-
-- **ggCompleteness.link** visualizes the output from the function `Completeness.link`
-
-- **ggSpec.link** visualizes the output from the function `Spec.link`
 
 - **ggObsAsy.link** visualizes the output from the function `ObsAsy.link`
 
-- **ggiNEXT.link** visualizes the output from the function `iNEXT.link`
+    
+
+Two functions for completeness analysis with graphical displays:  
+
+- **Completeness.link** calculates estimated sample completeness with order q. 
+
+- **ggCompleteness.link** visualizes the output from the function `Completeness.link`
+
+
+
+Two functions for specialization analysis with graphical displays: 
+
+- **Spec.link** computes standardized specialization estimation under specified sample coverage(or observed) with order q.
+
+- **ggSpec.link** visualizes the output from the function `Spec.link`
+
+
+Two functions for alpha, beta, gamma network diversity analysis and dissimilarity analysis with graphical displays: 
+
+- **iNEXTbeta.link** computes standardized gamma, alpha, beta network diversity, and four dissimilarity-turnover indices for three dimensions: taxonomic, phylogenetic and functional diversity at specified sample coverage.
     
 - **ggiNEXTbeta.link** visualizes the output from the function `iNEXTbeta.link`
 
@@ -143,16 +157,16 @@ There are twelve main functions in this package:
 
 Information on shared/unique species and their abundances is required. Thus, species identity (or any unique identification code) and assemblage affiliation must be provided in the data. Input data for a single dataset with N assemblages consist of a species-by-assemblage abundance <code>matrix/data.frame</code>. Users can input several datasets which may represent data collected from various localities, regions, plots, time periods, ..., etc. Input data for multiple datasets then consist of a list of matrices; each matrix represents a species-by-assemblage abundance matrix for one of the datasets. Different datasets can have different numbers of assemblages. `iNEXTbeta3D` computes beta diversity and dissimilarity among assemblages within each dataset. 
 
-For example, the dataset `beetles_plotA` included in the `iNEXT.link` package consists of a list of three matrices (for three fragments named "Closed" and "Open", respectively); each matrix represents a species-by-species interaction matrix. Run the following code to view the data: (Here we only show the first 5 columns for each matrix.).
+For example, the dataset `beetles_plotA` included in the `iNEXT.link` package consists of a list of three matrices (for three fragments named "Closed" and "Open", respectively); each matrix represents a species-by-species interaction matrix. Run the following code to view the data: (Here we only show the first 4 columns for each matrix.).
 
 ```{r eval=FALSE}
 data(beetles_plotA)
 beetles_plotA
 ```
 
-```{r echo=FALSE}
+```{r echo=FALSE, cache=TRUE}
 data(beetles_plotA)
-lapply(beetles_plotA, function(x) x[,1:5])
+lapply(beetles_plotA, function(x) x[,1:4])
 ```
 
 ### Phylogenetic tree format for phylogenetic network diversity
@@ -173,7 +187,7 @@ data(beetles_col_distM)
 beetles_col_distM
 ```
 
-```{r echo=FALSE}
+```{r echo=FALSE, cache=TRUE}
 data(beetles_col_distM)
 round(beetles_col_distM[1:3,1:3], 4)
 ```
@@ -340,7 +354,7 @@ output_qiFD  <- iNEXT.link(data, diversity = 'FD', q = c(0, 1, 2), nboot = 10, c
 
 Based on the dataset (`beetles_plotA`) included in the package, the following commands return all numerical results for `TD`. The first list of the output (`$TDInfo`) returns basic data information including the name of the Assemblage(`Dataset`), number of interaction events (`n`), observed species richness in row assemblage (`S.obs(row)`), observed species richness in column assemblage (`S.obs(col)`),the number of interactions (`Link.obs`), link percentage(`Connectance`), sample coverage/completeness estimate (`Coverage`) as well as the first ten species interaction frequency counts in the reference sample (`f1-f10`). The output is identical to that based on the function `DataInfo.link()` by specifying `diversity = 'TD'`; see later text). Thus, if only data information is required, the simpler function `DataInfo.link()` (see later text) can be used to obtain the same output. More information about the observed diversity (for any order q between 0 and 2) can be obtained by function `ObsAsy.link()`, which will be introduced later.
 
-```{r echo=TRUE}
+```{r echo=TRUE, cache=TRUE}
 data(beetles_plotA)
 data <- beetles_plotA
 output_qiTD = iNEXT.link(data, diversity = 'TD', q = c(0,1,2), nboot = 30)
@@ -356,7 +370,7 @@ The first data frame (`$size_based`) includes the name of the Assemblage(`$Datas
 output_qiTD$TDiNextEst$size_based
 ```
 
-```{r, echo=FALSE}
+```{r, echo=FALSE, cache=TRUE}
 output_qiTD$TDiNextEst$size_based[,5:10]<- round(output_qiTD$TDiNextEst$size_based[,5:10], 3)
 output_qiTD$TDiNextEst$size_based[1:6,]
 ```
@@ -367,7 +381,7 @@ The second data frame (`$coverage_based`) includes the name of assemblage, the d
 output_qiTD$TDiNextEst$coverage_based
 ```
 
-```{r, echo=FALSE}
+```{r, echo=FALSE, cache=TRUE}
 output_qiTD$TDiNextEst$coverage_based[,c(3:4,6:8)]<- round(output_qiTD$TDiNextEst$coverage_based[,c(3:4,6:8)], 3)
 output_qiTD$TDiNextEst$coverage_based[1:6,]
 ```
@@ -378,7 +392,7 @@ The third list of the output (`$TDAsyEst`) includes the name of the Assemblage (
 output_qiTD$TDAsyEst
 ```
 
-```{r, echo=FALSE}
+```{r, echo=FALSE, cache=TRUE}
 output_qiTD$TDAsyEst[,c(3:7)]<- round(output_qiTD$TDAsyEst[,c(3:7)], 3)
 output_qiTD$TDAsyEst
 ```
@@ -390,7 +404,7 @@ The `ggiNEXT.link` function can be used to make graphical displays for rarefacti
 ggiNEXT.link(output_qiTD, type = 1, facet.var = "Assemblage")
 ```
 
-```{r echo=FALSE}
+```{r echo=FALSE, cache=TRUE}
 ggiNEXT.link(output_qiTD, type = 1, facet.var = "Assemblage")
 ```
 
@@ -401,7 +415,7 @@ When `facet.var = "Order.q"` is specified in the `ggiNEXT.link` function, it cre
 ggiNEXT.link(output_qiTD, type = 1, facet.var = "Order.q")
 ```
 
-```{r echo=FALSE}
+```{r echo=FALSE, cache=TRUE}
 ggiNEXT.link(output_qiTD, type = 1, facet.var = "Order.q")
 ```
 
@@ -412,7 +426,7 @@ The following commands return the sample completeness (sample coverage) curve (`
 ggiNEXT.link(output_qiTD, type = 2, facet.var = "Assemblage")
 ```
 
-```{r echo=FALSE}
+```{r echo=FALSE, cache=TRUE}
 ggiNEXT.link(output_qiTD, type = 2, facet.var = "Assemblage")
 ```
 
@@ -423,17 +437,17 @@ The following commands return the coverage-based rarefaction/extrapolation sampl
 ggiNEXT.link(output_qiTD, type = 3, facet.var = "Assemblage")
 ```
 
-```{r echo=FALSE}
+```{r echo=FALSE, cache=TRUE}
 ggiNEXT.link(output_qiTD, type = 3, facet.var = "Assemblage")
 ```
 
 ```{r eval=FALSE}
 # TD coverage-based R/E curves, separating by "Order.q"
-ggiNEXT3D(output_qiTD, type = 3, facet.var = "Order.q")
+ggiNEXT.link(output_qiTD, type = 3, facet.var = "Order.q")
 ```
 
-```{r echo=FALSE}
-ggiNEXT3D(output_qiTD, type = 3, facet.var = "Order.q")
+```{r echo=FALSE, cache=TRUE}
+ggiNEXT.link(output_qiTD, type = 3, facet.var = "Order.q")
 ```
 
 ## <span style="color:blue;">PHYLOGENETIC NETWORK DIVERSITY (qiPD): RAREFACTION/EXTRAPOLATION VIA EXAMPLES</span>
@@ -442,15 +456,14 @@ ggiNEXT3D(output_qiTD, type = 3, facet.var = "Order.q")
 
 Based on the dataset (`beetles_plotA`) included in the package, the following commands return all numerical results for `PD`. The first list of the output (`$PDInfo`) returns basic data information including the name of the Assemblage(`Dataset`), number of interaction events (`n`), observed species richness in row assemblage (`S.obs(row)`), observed species richness in column assemblage (`S.obs(col)`),the number of interactions (`Link.obs`), link percentage(`Connectance`), the number of singletons and doubletons in the node/branch set (`f1*, f2*`), the total branch lenghth of those singletons/doubletons in the node/branch set (`g1, g2`), the observed total branch length in the phylogenetic tree (`PD.obs`) as well as mean reference time (`mean_T`). The output is identical to that based on the function `DataInfo.link()` by specifying `diversity = 'PD'`; see later text). Thus, if only data information is required, the simpler function `DataInfo.link()` (see later text) can be used to obtain the same output. More information about the observed diversity (for any order q between 0 and 2) can be obtained by function `ObsAsy.link()`, which will be introduced later.
 
-```{r echo=TRUE}
+```{r echo=TRUE, cache=TRUE}
 data(beetles_plotA)
 data(beetles_col_tree)
 
 data <- beetles_plotA
 tree <- beetles_col_tree
 
-output_qiPD  <- iNEXT3D(data, diversity = 'PD', q = c(0, 1, 2), datatype = "abundance", 
-                        nboot = 20, col.tree = tree)
+output_qiPD  <- iNEXT.link(data, diversity = 'PD', q = c(0, 1, 2), nboot = 20, col.tree = tree)
 output_qiPD$PDInfo
 ```
 
@@ -463,7 +476,7 @@ The first data frame (`$size_based`) includes the name of the Assemblage(`$Datas
 output_qiPD$PDiNextEst$size_based
 ```
 
-```{r, echo=FALSE}
+```{r, echo=FALSE, cache=TRUE}
 output_qiPD$PDiNextEst$size_based[,5:11]<- round(output_qiPD$PDiNextEst$size_based[,5:11], 3)
 output_qiPD$PDiNextEst$size_based[1:6,]
 ```
@@ -474,7 +487,7 @@ The second data frame (`$coverage_based`) includes the name of assemblage (`Data
 output_qiPD$PDiNextEst$coverage_based
 ```
 
-```{r, echo=FALSE}
+```{r, echo=FALSE, cache=TRUE}
 output_qiPD$PDiNextEst$coverage_based[,c(2,6:9)]<- round(output_qiPD$PDiNextEst$coverage_based[,c(2,6:9)], 3)
 output_qiPD$PDiNextEst$coverage_based[1:6,]
 ```
@@ -485,7 +498,7 @@ The third list of the output (`$PDAsyEst`) includes the name of the Assemblage (
 output_qiPD$PDAsyEst
 ```
 
-```{r, echo=FALSE}
+```{r, echo=FALSE, cache=TRUE}
 output_qiPD$PDAsyEst[,c(3:7)]<- round(output_qiPD$PDAsyEst[,c(3:7)], 3)
 output_qiPD$PDAsyEst
 ```
@@ -497,7 +510,7 @@ The `ggiNEXT.link` function can be used to make graphical displays for rarefacti
 ggiNEXT.link(output_qiPD, type = 1, facet.var = "Assemblage")
 ```
 
-```{r echo=FALSE}
+```{r echo=FALSE, cache=TRUE}
 ggiNEXT.link(output_qiPD, type = 1, facet.var = "Assemblage")
 ```
 
@@ -508,7 +521,7 @@ When `facet.var = "Order.q"` is specified in the `ggiNEXT.link` function, it cre
 ggiNEXT.link(output_qiPD, type = 1, facet.var = "Order.q")
 ```
 
-```{r echo=FALSE}
+```{r echo=FALSE, cache=TRUE}
 ggiNEXT.link(output_qiPD, type = 1, facet.var = "Order.q")
 ```
 
@@ -519,7 +532,7 @@ The following commands return the sample completeness (sample coverage) curve (`
 ggiNEXT.link(output_qiPD, type = 2, facet.var = "Assemblage")
 ```
 
-```{r echo=FALSE}
+```{r echo=FALSE, cache=TRUE}
 ggiNEXT.link(output_qiPD, type = 2, facet.var = "Assemblage")
 ```
 
@@ -530,24 +543,24 @@ The following commands return the coverage-based rarefaction/extrapolation sampl
 ggiNEXT.link(output_qiPD, type = 3, facet.var = "Assemblage")
 ```
 
-```{r echo=FALSE}
+```{r echo=FALSE, cache=TRUE}
 ggiNEXT.link(output_qiPD, type = 3, facet.var = "Assemblage")
 ```
 
 ```{r eval=FALSE}
 # PD coverage-based R/E curves, separating by "Order.q"
-ggiNEXT3D(output_qiPD, type = 3, facet.var = "Order.q")
+ggiNEXT.link(output_qiPD, type = 3, facet.var = "Order.q")
 ```
 
-```{r echo=FALSE}
-ggiNEXT3D(output_qiPD, type = 3, facet.var = "Order.q")
+```{r echo=FALSE, cache=TRUE}
+ggiNEXT.link(output_qiPD, type = 3, facet.var = "Order.q")
 ```
 
 ### EXAMPLE 3: qiFD rarefaction/extrapolation for interaction frequency data 
 
 Based on the dataset (`beetles_plotA`) included in the package, the following commands return all numerical results for `FD`. The first list of the output (`$FDInfo`) returns basic data information including the name of the Assemblage (`Dataset`), number of interaction events (`n`), observed species richness in row assemblage (`S.obs(row)`), observed species richness in column assemblage (`S.obs(col)`),the number of interactions (`Link.obs`), link percentage(`Connectance`), the number of singletons and doubletons in th data (`f1, f2`), the number of singletons and doubletons in th functional group (`a1', a2'`) and the threshold of functional distinctiveness between any two species (`threshold`). The output is identical to that based on the function `DataInfo.link()` by specifying `diversity = 'FD'`; see later text). Thus, if only data information is required, the simpler function `DataInfo.link()` (see later text) can be used to obtain the same output. More information about the observed diversity (for any order q between 0 and 2) can be obtained by function `ObsAsy.link()`, which will be introduced later.
 
-```{r echo=TRUE}
+```{r echo=TRUE, cache=TRUE}
 data(beetles_plotA)
 data(beetles_col_distM)
 
@@ -567,7 +580,7 @@ The first data frame (`$size_based`) includes the name of the Assemblage(`$Datas
 output_qiFD$FDiNextEst$size_based
 ```
 
-```{r, echo=FALSE}
+```{r, echo=FALSE, cache=TRUE}
 output_qiFD$FDiNextEst$size_based[,5:10]<- round(output_qiFD$FDiNextEst$size_based[,5:10], 3)
 output_qiFD$FDiNextEst$size_based[1:6,]
 ```
@@ -578,9 +591,9 @@ The second data frame (`$coverage_based`) includes the name of assemblage, the d
 output_qiFD$FDiNextEst$coverage_based
 ```
 
-```{r, echo=FALSE}
+```{r, echo=FALSE, cache=TRUE}
 output_qiFD$FDiNextEst$coverage_based[,c(3:4,6:8)]<- round(output_qiFD$FDiNextEst$coverage_based[,c(3:4,6:8)], 3)
-output_qiFD$FDiNextEst$coverage_based
+output_qiFD$FDiNextEst$coverage_based[1:6,]
 ```
 
 The third list of the output (`$FDAsyEst`) includes the name of the Assemblage (`$Dataset`), diversity label (`qiFD`, species richness for q = 0, Shannon diversity for q = 1, and Simpson diversity for q = 2), the observed network diversity (`FD_obs`), asymptotic network diversity estimate (`FD_asy`) and its estimated bootstrap standard error (`s.e.`) as well as the confidence intervals for asymptotic network diversity (`qiFD.LCL` and `qiFD.UCL`). These statistics are computed only for q = 0, 1 and 2. More detailed information about asymptotic and observed diversity estimates for any order q between 0 and 2 can be obtained from function `ObsAsy.link()`. The output for `$FDAsyEst` is shown below:
@@ -589,7 +602,7 @@ The third list of the output (`$FDAsyEst`) includes the name of the Assemblage (
 output_qiFD$FDAsyEst
 ```
 
-```{r, echo=FALSE}
+```{r, echo=FALSE, cache=TRUE}
 output_qiFD$FDAsyEst[,c(3:7)]<- round(output_qiFD$FDAsyEst[,c(3:7)], 3)
 output_qiFD$FDAsyEst
 ```
@@ -601,7 +614,7 @@ The `ggiNEXT.link` function can be used to make graphical displays for rarefacti
 ggiNEXT.link(output_qiFD, type = 1, facet.var = "Assemblage")
 ```
 
-```{r echo=FALSE}
+```{r echo=FALSE, cache=TRUE}
 ggiNEXT.link(output_qiFD, type = 1, facet.var = "Assemblage")
 ```
 
@@ -612,7 +625,7 @@ When `facet.var = "Order.q"` is specified in the `ggiNEXT.link` function, it cre
 ggiNEXT.link(output_qiFD, type = 1, facet.var = "Order.q")
 ```
 
-```{r echo=FALSE}
+```{r echo=FALSE, cache=TRUE}
 ggiNEXT.link(output_qiFD, type = 1, facet.var = "Order.q")
 ```
 
@@ -623,7 +636,7 @@ The following commands return the sample completeness (sample coverage) curve (`
 ggiNEXT.link(output_qiFD, type = 2, facet.var = "Assemblage")
 ```
 
-```{r echo=FALSE}
+```{r echo=FALSE, cache=TRUE}
 ggiNEXT.link(output_qiFD, type = 2, facet.var = "Assemblage")
 ```
 
@@ -634,17 +647,17 @@ The following commands return the coverage-based rarefaction/extrapolation sampl
 ggiNEXT.link(output_qiFD, type = 3, facet.var = "Assemblage")
 ```
 
-```{r echo=FALSE}
+```{r echo=FALSE, cache=TRUE}
 ggiNEXT.link(output_qiFD, type = 3, facet.var = "Assemblage")
 ```
 
 ```{r eval=FALSE}
 # FD coverage-based R/E curves, separating by "Order.q"
-ggiNEXT3D(output_qiFD, type = 3, facet.var = "Order.q")
+ggiNEXT.link(output_qiFD, type = 3, facet.var = "Order.q")
 ```
 
-```{r echo=FALSE}
-ggiNEXT3D(output_qiFD, type = 3, facet.var = "Order.q")
+```{r echo=FALSE, cache=TRUE}
+ggiNEXT.link(output_qiFD, type = 3, facet.var = "Order.q")
 ```
 
 ## <span style="color:red;">FUNCTION DataInfo.link(): DATA INFORMATION</span> 
@@ -779,7 +792,7 @@ output_est_qiTD <- estimateD.link(beetles_plotA, diversity = 'TD', q = c(0,1,2),
 output_est_qiTD
 ```
 
-```{r, echo=FALSE}
+```{r, echo=FALSE, cache=TRUE}
 data(beetles_plotA)
 output_est_qiTD <- estimateD.link(beetles_plotA, diversity = 'TD', q = c(0,1,2), 
                                   base = "coverage", level = c(0.93, 0.97))
@@ -801,7 +814,7 @@ output_est_qiPD <- estimateD.link(beetles_plotA, diversity = 'PD', q = c(0,1,2),
 output_est_qiPD
 ```
 
-```{r, echo=FALSE}
+```{r, echo=FALSE, cache=TRUE}
 data(beetles_plotA)
 data(beetles_col_tree)
 output_est_qiPD <- estimateD.link(beetles_plotA, diversity = 'PD', q = c(0,1,2), 
@@ -1030,7 +1043,7 @@ output_com <- Completeness.link(data = beetles_plotA)
 output_com
 ```
 
-```{r echo=TRUE, cache=TRUE}
+```{r echo=FALSE, cache=TRUE}
 data(beetles_plotA)
 output_com <- Completeness.link(data = beetles_plotA)
 
@@ -1114,10 +1127,10 @@ The dataset `beetles_plotA` is used to estimate specialization at the default st
 ```{r, eval=FALSE}
 data(beetles_plotA)
 output_spec <- Spec.link(data = beetles_plotA)
-output_spec
+output_spec[[1]]
 ```
 
-```{r, echo=TRUE, cache=TRUE}
+```{r, echo=FALSE, cache=TRUE}
 data(beetles_plotA)
 output_spec <- Spec.link(data = beetles_plotA)
 
@@ -1126,7 +1139,7 @@ for(i in 1:5){
   tmp[[i]][,2:6] <- round(tmp[[i]][,2:6], 3)
 }
 
-tmp
+tmp[[1]]
 ```
 
 ## <span style="color:red;">FUNCTION iNEXTbeta.link</span>
@@ -1226,7 +1239,7 @@ This function returns an `"iNEXTbeta.link"` object which can be further used to 
 
 ### Output of the main function iNEXTbeta.link() 
 
-The `iNEXTbeta3D()` function for each of the three dimensions (qiTD, qiPD, and qiFD) returns the `"iNEXTbeta.link"` object including seven data frames for each dataset:  
+The `iNEXTbeta.link()` function for each of the three dimensions (qiTD, qiPD, and qiFD) returns the `"iNEXTbeta.link"` object including seven data frames for each dataset:  
 
 - gamma (standardized gamma network diversity)
 - alpha (standardized alpha network diversity)
@@ -1326,12 +1339,14 @@ The output contains seven data frames: `gamma`, `alpha`, `beta`, `1-C`, `1-U`, `
 
 Our network diversity/dissimilarity estimates and related statistics in the default output are displayed for the standardized coverage/completeness value from 0.5 to 1.0 (for q = 1 and 2), in increments of 0.025. In addition, the results for the following four coverage value are also added: `SC(n, alpha)`, `SC(2n, alpha)`, `SC(n, gamma)` and `SC(2n, gamma)` if these values are in the above-specified range. Here `SC(n, alpha)` and `SC(2n, alpha)` represent, respectively, the coverage estimate for the alpha reference sample size n and the extrapolated sample with size 2n in the joint assemblage. Similar definitions pertain to `SC(n, gamma)` and `SC(2n, gamma)` for the gamma reference sample. For beta network diversity and network dissimilarity, the observed sample coverage and extrapolation limit are defined the same as the alpha diversity.
 
-Because all the network diversity/dissimilarity estimates are computed for the standardized coverage range values starting from 0.5, the default setting with `level = NULL` does not work if the observed sample coverage in the alpha/gamma reference sample is less than 50%. In this case, readers should specify sample coverage values using the argument `level`, instead of using `level = NULL`. The suggested maximum coverage value that readers can specify is `SC(2n, alpha)`. Beyond the limit, beta diversity and dissimilarity estimates may be subject to some bias. Below we show the output for taxonomic beta network diversity between the "Closed" and "Open" assemblages. 
+Because all the network diversity/dissimilarity estimates are computed for the standardized coverage range values starting from 0.5, the default setting with `level = NULL` does not work if the observed sample coverage in the alpha/gamma reference sample is less than 50%. In this case, readers should specify sample coverage values using the argument `level`, instead of using `level = NULL`. The suggested maximum coverage value that readers can specify is `SC(2n, alpha)`. Beyond the limit, beta diversity and dissimilarity estimates may be subject to some bias. Below we show the output for phylogenetic beta network diversity between the "Closed" and "Open" assemblages. 
 
 
 ```{r echo=FALSE, cache=TRUE}
 data(beetles_plotA)
-output_beta_qiPD = iNEXTbeta.link(data = beetles_plotA, diversity = 'PD', level = NULL, q = c(0, 1, 2))
+data(beetles_col_tree)
+output_beta_qiPD = iNEXTbeta.link(data = beetles_plotA, diversity = 'PD', level = NULL, q = c(0, 1, 2), 
+                                  col.tree = beetles_col_tree)
 
 tmp = output_beta_qiPD$Dataset_1$beta
 tmp[,c(3:5, 7:9)] = round(tmp[,c(3:5, 7:9)], 3)
@@ -1342,24 +1357,26 @@ tmp
 Run the following code to display the two types of curves: 
   
 ```{r, fig.align='center', fig.height=6, fig.width=6}
-## R/E curves for taxonomic gamma, alpha and beta network diversity 
+## R/E curves for phylogenetic gamma, alpha and beta network diversity 
 ggiNEXTbeta.link(output_beta_qiPD, type = 'B')
 ```
 
 
 ```{r, fig.align='center', fig.height=8, fig.width=6}
-## R/E curves for four taxonomic network dissimilarity indices
+## R/E curves for four phylogenetic network dissimilarity indices
 ggiNEXTbeta.link(output_beta_qiPD, type = 'D')
 ```
 
-## <span style="color:blue;">TAXONOMIC NETWORK DIVERSITY (qiFD): RAREFACTION/EXTRAPOLATION VIA EXAMPLES</span>
+## <span style="color:blue;">FUNCTIONAL NETWORK DIVERSITY (qiFD): RAREFACTION/EXTRAPOLATION VIA EXAMPLES</span>
 
 ### Example 14: Alpha, Beta, Gamma network diversity and dissimilarity for interaction frequency data
 
 ```{r eval=FALSE}
 # Taxonomic diversity
 data(beetles_plotA)
-output_beta_qiFD = iNEXTbeta.link(data = beetles_plotA, diversity = 'FD', level = NULL, q = c(0, 1, 2))
+data(beetles_col_distM)
+output_beta_qiFD = iNEXTbeta.link(data = beetles, diversity = 'FD', level = NULL, q = c(0, 1, 2), 
+                                  col.distM = beetles_col_distM, FDtype = "AUC", nboot = 0)
 output_beta_qiFD
 ```
 
@@ -1372,7 +1389,9 @@ Because all the network diversity/dissimilarity estimates are computed for the s
 
 ```{r echo=FALSE, cache=TRUE}
 data(beetles_plotA)
-output_beta_qiFD = iNEXTbeta.link(data = beetles_plotA, diversity = 'FD', level = NULL, q = c(0, 1, 2))
+data(beetles_col_distM)
+output_beta_qiFD = iNEXTbeta.link(data = beetles_plotA, diversity = 'FD', level = NULL, q = c(0, 1, 2), 
+                                  col.distM = beetles_col_distM, FDtype = "AUC", nboot = 0)
 
 tmp = output_beta_qiFD$Dataset_1$beta
 tmp[,c(3:5, 7:9)] = round(tmp[,c(3:5, 7:9)], 3)
@@ -1383,13 +1402,13 @@ tmp
 Run the following code to display the two types of curves: 
   
 ```{r, fig.align='center', fig.height=6, fig.width=6}
-## R/E curves for taxonomic gamma, alpha and beta network diversity 
+## R/E curves for functional gamma, alpha and beta network diversity 
 ggiNEXTbeta.link(output_beta_qiFD, type = 'B')
 ```
 
 
 ```{r, fig.align='center', fig.height=8, fig.width=6}
-## R/E curves for four taxonomic network dissimilarity indices
+## R/E curves for four functional network dissimilarity indices
 ggiNEXTbeta.link(output_beta_qiFD, type = 'D')
 ```
 
@@ -1397,14 +1416,22 @@ ggiNEXTbeta.link(output_beta_qiFD, type = 'D')
 The iNEXT.link package is licensed under the GPLv3. To help refine `iNEXT.link`, your comments or feedback would be welcome (please send them to Anne Chao or report an issue on the iNEXT.link github [iNEXT.link_github](https://github.com/AnneChao/iNEXT.link). 
 
 ## References
+- Chiu, C.-H., Jost, L. and Chao*, A. (2014). Phylogenetic beta diversity, similarity, and differentiation measures based on Hill numbers. Ecological Monographs 84, 21-44.
+
+- Chao, A., Chiu, C.-H., Villéger, S., Sun, I.-F., Thorn, S., Lin, Y.-C., Chiang, J. M. and Sherwin, W. B. (2019). An attribute-diversity approach to functional diversity, functional beta diversity, and related (dis)similarity measures. Ecological Monographs, 89, e01343. 10.1002/ecm.1343.
+
+- Chao, A., Gotelli, N. J., Hsieh, T. C., Sander, E. L., Ma, K. H., Colwell, R. K. and Ellison, A.
+M. (2014). Rarefaction and extrapolation with Hill numbers: a framework for sampling and estimation in species diversity studies. Ecological Monographs, 84, 45–67.
+
 - Chao, A., Henderson, P. A., Chiu, C.-H., Moyes, F., Hu, K.-H., Dornelas, M and Magurran, A. E. (2021). Measuring temporal change in alpha diversity: a framework integrating taxonomic, phylogenetic and functional diversity and the iNEXT.3D standardization. Methods in Ecology and Evolution, 12, 1926-1940.
 
-- Chao, A. & Jost, L. (2012) Coverage-based rarefaction and extrapolation: standardizing samples by completeness rather than size. Ecology, 93, 2533?M2547.
+- Chao, A. & Jost, L. (2012) Coverage-based rarefaction and extrapolation: standardizing samples by completeness rather than size. Ecology, 93, 2533–2547
 
-- Chao, A., Thorn, S., Chiu, C.-H., Moyes, F., Hu, K.-H., Chazdon, R. L., Wu, J., Dornelas, M., Zelen??, D., Colwell, R. K., and Magurran, A. E. (2023). Rarefaction and extrapolation with beta diversity under a framework of Hill numbers: the iNEXT.beta3D standardization. To appear in Ecological Monographs.
+- Chao, A., Thorn, S., Chiu, C.-H., Moyes, F., Hu, K.-H., Chazdon, R. L., Wu, J., Dornelas, M., Zeleny, D., Colwell, R. K., and Magurran, A. E. (2023). Rarefaction and extrapolation with beta diversity under a framework of Hill numbers: the iNEXT.beta3D standardization. Ecological Monographs, e1588.
 
-- Chao, A., Y. Kubota, D. Zelen??, C.-H. Chiu, C.-F. Li, B. Kusumoto, M. Yasuhara, S. Thorn, C.-L. Wei, M. J. Costello, and R. K. Colwell (2020). Quantifying sample completeness and comparing diversities among assemblages. Ecological Research, 35, 292-314.
+- Chao, A., Y. Kubota, D. Zelený, C.-H. Chiu, C.-F. Li, B. Kusumoto, M. Yasuhara, S. Thorn, C.-L. Wei, M. J. Costello, and R. K. Colwell (2020). Quantifying sample completeness and comparing diversities among assemblages. Ecological Research, 35, 292-314.
 
-- Chiu, C-H., Chao, A., Vogel, S., Kriegel, P. and Thorn, S. (2023). Quantifying and estimating ecological network diversity based on incomplete sampling data. Philosophical Transactions of the Royal Society B, 378: 20220183. https://doi.org/10.1098/rstb.2022.0183.
+- Chiu, C-H., Chao, A., Vogel, S., Kriegel, P. and Thorn, S. (2023). Quantifying and estimating ecological network diversity based on incomplete sampling data. Philosophical Transactions of the Royal Society B, 378: 20220183. https://doi.org/10.1098/rstb.2022.0183
+
 
 
