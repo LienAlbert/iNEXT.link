@@ -535,7 +535,7 @@ datainffun <- function(data, row.distM = NULL,col.distM = NULL, datatype){
 datainfphy <- function(data, row.tree = NULL,col.tree = NULL, datatype){
   if (!inherits(data, "data.frame")) 
   #data <- as.data.frame(data)
-
+  
   rownames(data) = gsub('\\.', '_',rownames(data))
   colnames(data) = gsub('\\.', '_',colnames(data))
   # if(datatype == "abundance"){
