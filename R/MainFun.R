@@ -357,7 +357,7 @@ iNEXT.link <- function(data, diversity = 'TD', q = c(0,1,2), size = NULL,
                                  nboot = nboot,col.tree = col.tree,row.tree = row.tree, type = PDtype)
       INEXT_est <- INEXT_est_0
       INEXT_est[[2]]$coverage_based <- rbind(INEXT_est_0[[2]]$coverage_based, INEXT_est_q[[2]]$coverage_based)
-      INEXT_est[[2]]$coverage_based <- INEXT_est[["PDiNextEst"]][["coverage_based"]][order(INEXT_est[["PDiNextEst"]][["coverage_based"]]$Assemblage),]
+      #INEXT_est[[2]]$coverage_based <- INEXT_est[["PDiNextEst"]][["coverage_based"]][order(INEXT_est[["PDiNextEst"]][["coverage_based"]]$Assemblage),]
     }else{
       
       asy_size <- sapply(1:length(data) ,function(i) coverage_to_size(data[[i]], 0.999, datatype = "abundance"))
