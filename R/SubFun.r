@@ -1337,10 +1337,15 @@ iNEXTbeta.PDlink <- function(data, level, datatype='abundance', q = c(0, 1, 2),
           seen_interaction_aili%>%filter(tgroup == 'Tip')%>%summarise(sum(branch.abun))
           # unseen_interaction_aili = data.frame(branch.abun = rep(pi$unseen,f0_k), branch.length = g0 / f0_k,
           #                                      tgroup = "Tip",interaction = "unseen")
-          unseen_interaction_aili = data.frame(branch.abun = rep(0,f0_pool), branch.length = rep(0,f0_pool),
-                                               tgroup = "Tip",interaction = "unseen")%>%
-            mutate(interaction = paste0(interaction, row_number()))
-          seen_unseen = rbind(seen_interaction_aili, unseen_interaction_aili)
+          if(f0_pool == 0){
+            seen_unseen = seen_interaction_aili
+          }else{
+            unseen_interaction_aili = data.frame(branch.abun = rep(0,f0_pool), branch.length = rep(0,f0_pool),
+                                                 tgroup = "Tip",interaction = "unseen")%>%
+              mutate(interaction = paste0(interaction, row_number()))
+            seen_unseen = rbind(seen_interaction_aili, unseen_interaction_aili)
+          }
+          
           ## 8268 candidates out of 8977
           candidates = which(seen_unseen$branch.abun == 0)
           ###
