@@ -916,7 +916,7 @@ estimateD.link = function(data, diversity = 'TD', q = c(0, 1, 2), base = "covera
               x_B = aL_boot %>% filter(tgroup == "Tip") %>% .$branch.abun %>% as.matrix()
               ai_B <- aL_boot$branch.abun %>% as.matrix()
               Li_b <- aL_boot$branch.length %>% as.matrix()
-              colnames(Li_b) = paste0("T",reft)
+              colnames(Li_b) = paste0("T",tbar)
               isn0 <- ai_B > 0
               
               tmp = iNEXT.3D:::invChatPD_abu(x = x_B, 
