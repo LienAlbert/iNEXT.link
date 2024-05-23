@@ -905,12 +905,30 @@ estimateD.link = function(data, diversity = 'TD', q = c(0, 1, 2), base = "covera
         if(nboot >1 ){
           boot.sam <- sample.boot.phy(data_2d,nboot,row.tree = row.tree,col.tree = col.tree)
           PD.sd <- lapply(boot.sam, function(aL_boot){
-
-            tmp = iNEXT.3D:::PhD.m.est(ai = aL_boot$branch.abun,
-                                       Lis = aL_boot$branch.length%>%as.matrix(),
-                                       m = size_m,
-                                       q = q,nt = n, reft = tbar, cal = PDtype)%>%
-              as.vector()%>%as.data.frame()
+            if(base == "size"){
+              tmp = iNEXT.3D:::PhD.m.est(ai = aL_boot$branch.abun,
+                                         Lis = aL_boot$branch.length%>%as.matrix(),
+                                         m = size_m,
+                                         q = q,nt = n, reft = tbar, cal = PDtype)%>%
+                as.vector()%>%as.data.frame()
+            }else{
+              
+              x_B = aL_boot %>% filter(tgroup == "Tip") %>% .$branch.abun %>% as.matrix()
+              ai_B <- aL_boot$branch.abun %>% as.matrix()
+              Li_b <- aL_boot$branch.length %>% as.matrix()
+              colnames(Li_b) = paste0("T",reft)
+              isn0 <- ai_B > 0
+              
+              tmp = iNEXT.3D:::invChatPD_abu(x = x_B, 
+                                             ai = ai_B[isn0], 
+                                             Lis = Li_b[isn0, , drop = F], 
+                                             q = q, 
+                                             Cs = level, 
+                                             n = sum(x_B),
+                                             reft = tbar, 
+                                             cal = PDtype)%>%as.vector()%>%as.data.frame()
+            }
+            
             return(tmp)
           })%>%
             abind(along=3) %>% apply(1:2, sd)%>%as.vector()

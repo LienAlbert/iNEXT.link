@@ -1866,7 +1866,8 @@ inextPDlink = function (datalist, datatype,col.tree,row.tree, q, reft, m, cal, n
 
         if (unconditional_var) {
           ses <- sapply(1:nboot, function(B) {
-
+            
+            x_B = boot.sam[[B]] %>% filter(tgroup == "Tip") %>% .$branch.abun %>% as.matrix()
             ai_B <- boot.sam[[B]]$branch.abun %>% as.matrix()
             Li_b <- boot.sam[[B]]$branch.length %>% as.matrix()
             colnames(Li_b) = paste0("T",reft)
@@ -1874,7 +1875,7 @@ inextPDlink = function (datalist, datatype,col.tree,row.tree, q, reft, m, cal, n
             qPDm_b <- iNEXT.3D:::PhD.m.est(ai = ai_B[isn0], Lis = Li_b[isn0, , drop = F], m = m[[i]], q = q, nt = n,
                                            reft = reft, cal = cal) %>% as.numeric()
             covm_b <- iNEXT.3D:::Coverage(ai_B[isn0], datatype, m[[i]])
-            qPD_unc_b <- unique(iNEXT.3D:::invChatPD_abu(x = ai_B[isn0], ai = ai_B[isn0], Lis = Li_b[isn0, , drop = F], q = q, Cs = goalSC, n = n,
+            qPD_unc_b <- unique(iNEXT.3D:::invChatPD_abu(x = x_B, ai = ai_B[isn0], Lis = Li_b[isn0, , drop = F], q = q, Cs = goalSC, n = sum(x_B),
                                                          reft = reft, cal = cal))$qPD
             return(c(qPDm_b, covm_b, qPD_unc_b))
           }) %>% apply(., 1, sd)
@@ -1924,9 +1925,9 @@ inextPDlink = function (datalist, datatype,col.tree,row.tree, q, reft, m, cal, n
       out_m$SC.UCL[out_m$SC.UCL > 1] <- 1
       if (unconditional_var) {
         ses_pd_unc <- ses[-(1:(length(qPDm) + length(covm)))]
-        out_C <- qPD_unc %>% mutate(qPD.LCL = qPD -
-                                      qtile * ses_pd_unc, qPD.UCL = qPD + qtile *
-                                      ses_pd_unc, Type = cal,
+        out_C <- qPD_unc %>% mutate(qPD.LCL = qPD_unc$qPD - qtile*ses_pd_unc, 
+                                    qPD.UCL = qPD + qtile *ses_pd_unc, 
+                                    Type = cal,
                                     Assemblage = nms[i])
         id_C <- match(c("Assemblage", "goalSC", "SC", "m", "Method", "Order.q", 
                         "qPD", "qPD.LCL", "qPD.UCL", "Reftime", "Type"), names(out_C),
