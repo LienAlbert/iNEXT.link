@@ -904,18 +904,18 @@ estimateD.link = function(data, diversity = 'TD', q = c(0, 1, 2), base = "covera
         
         if(nboot >1 ){
           boot.sam <- sample.boot.phy(data_2d,nboot,row.tree = row.tree,col.tree = col.tree)
-          PD.sd <- lapply(boot.sam, function(aL_boot){
+          PD.sd <- lapply(1:length(boot.sam), function(i){
             if(base == "size"){
-              tmp = iNEXT.3D:::PhD.m.est(ai = aL_boot$branch.abun,
-                                         Lis = aL_boot$branch.length%>%as.matrix(),
+              tmp = iNEXT.3D:::PhD.m.est(ai = boot.sam[[i]]$branch.abun,
+                                         Lis = boot.sam[[i]]$branch.length%>%as.matrix(),
                                          m = size_m,
                                          q = q,nt = n, reft = tbar, cal = PDtype)%>%
                 as.vector()%>%as.data.frame()
             }else{
               
-              x_B = aL_boot %>% filter(tgroup == "Tip") %>% .$branch.abun %>% as.matrix()
-              ai_B <- aL_boot$branch.abun %>% as.matrix()
-              Li_b <- aL_boot$branch.length %>% as.matrix()
+              x_B = boot.sam[[i]] %>% filter(tgroup == "Tip") %>% .$branch.abun %>% as.matrix()
+              ai_B <- boot.sam[[i]]$branch.abun %>% as.matrix()
+              Li_b <- boot.sam[[i]]$branch.length %>% as.matrix()
               colnames(Li_b) = paste0("T",tbar)
               isn0 <- ai_B > 0
               
@@ -926,7 +926,7 @@ estimateD.link = function(data, diversity = 'TD', q = c(0, 1, 2), base = "covera
                                              Cs = level, 
                                              n = sum(x_B),
                                              reft = tbar, 
-                                             cal = PDtype)%>%as.vector()%>%as.data.frame()
+                                             cal = PDtype)$qPD%>%as.vector()%>%as.data.frame()
             }
             
             return(tmp)
