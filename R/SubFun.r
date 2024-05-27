@@ -494,7 +494,7 @@ datainffun <- function(data, row.distM = NULL,col.distM = NULL, datatype){
 
   res <- matrix(0,10,1,dimnames=list(1:10, "value"))
 
-  rownames(res) <- c("n", "S.obs(row)","S.obs(col)","Links.obs","Connectance", "f1", "f2", "a1'", "a2'", "threshold")
+  rownames(res) <- c("n", "S.obs(row)","S.obs(col)","Links.obs","Connectance", "f1", "f2", "a1'", "a2'", "d_mean")
 
   res[1,1] <- as.integer(sum(data))
   if("matrix" %in% class(data)){
@@ -549,7 +549,7 @@ datainfphy <- function(data, row.tree = NULL,col.tree = NULL, datatype){
   # }
   res <- matrix(0,11,1,dimnames=list(1:11, "value"))
   # rownames(res) <- c("n", "S.obs","Links.obs","S.obs.row","S.obs.col","Connectance", "f1*", "f2*", "g1", "g2", "observed PD", "mean_T")
-  rownames(res) <- c("n", "S.obs(row)","S.obs(col)","Links.obs","Connectance", "f1*", "f2*", "g1", "g2", "PD.obs", "mean_T")
+  rownames(res) <- c("n", "S.obs(row)","S.obs(col)","Links.obs","Connectance", "f1*", "f2*", "g1", "g2", "PD.obs", "T1*T2")
 
   res[1,1] <- as.integer(sum(data))
   if("matrix" %in% class(data)){
