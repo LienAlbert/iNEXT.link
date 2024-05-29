@@ -1811,7 +1811,7 @@ iNEXTPDlink = function (data, datatype = "abundance", col.tree = NULL, row.tree 
   LCL <- index$qPD.LCL[index$Method == "Asymptotic"]
   UCL <- index$qPD.UCL[index$Method == "Asymptotic"]
   index <- dcast(index, formula = Network + Order.q ~ Method,
-                 value.var = "qPD")
+                 value.var = "qiPD")
   index <- cbind(index, se = (UCL - index$Asymptotic)/qnorm(1 - (1 - conf)/2), LCL, UCL)
   if (nboot > 0)
     index$LCL[index$LCL < index$Empirical & index$Order.q == 0] <- index$Empirical[index$LCL < index$Empirical &
@@ -2297,7 +2297,7 @@ iNEXTlinkFD = function (data, row.distM = NULL, col.distM = NULL , datatype = "a
   LCL <- index$qFD.LCL[index$Method == "Asymptotic"]
   UCL <- index$qFD.UCL[index$Method == "Asymptotic"]
   index <- dcast(index, formula = Assemblage + Order.q ~ Method,
-                 value.var = "qFD")
+                 value.var = "qiFD")
   index <- cbind(index, se = (UCL - index$Asymptotic)/qnorm(1 - (1 - conf)/2), LCL, UCL)
   if (nboot > 0)
     index$LCL[index$LCL < index$Empirical & index$Order.q == 0] <- index$Empirical[index$LCL < index$Empirical & index$Order.q == 0]
@@ -2545,7 +2545,7 @@ iNEXTlinkAUC = function (data, row.distM = NULL, col.distM = NULL , datatype = "
   LCL <- index$qFD.LCL[index$Method == "Asymptotic"]
   UCL <- index$qFD.UCL[index$Method == "Asymptotic"]
   index <- dcast(index, formula = Assemblage + Order.q ~ Method,
-                 value.var = "qFD")
+                 value.var = "qiFD")
   index <- cbind(index, se = (UCL - index$Asymptotic)/qnorm(1 - (1 - conf)/2), LCL, UCL)
   if (nboot > 0)
     index$LCL[index$LCL < index$Empirical & index$Order.q == 0] <- index$Empirical[index$LCL < index$Empirical & index$Order.q == 0]
