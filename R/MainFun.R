@@ -333,8 +333,8 @@ iNEXT.link <- function(data, diversity = 'TD', q = c(0,1,2), size = NULL,
     res[[2]] = INEXT_est$TDiNextEst
     res[[3]] = INEXT_est$TDAsyEst
     names(res) = c("TDInfo", "TDiNextEst", "TDAsyEst")
-    colnames(res$TDiNextEst$size_based[,c("qTD", "qTD.LCL", "qTD.UCL")]) <- c("qiTD", "qiTD.LCL", "qiTD.UCL")
-    colnames(res$TDiNextEst$coverage_based[,c("qTD", "qTD.LCL", "qTD.UCL")]) <- c("qiTD", "qiTD.LCL", "qiTD.UCL")
+    rename(res$TDiNextEst$size_based, c(qiTD = "qTD",qiTD.LCL = "qTD.LCL", qiTD.UCL = "qTD.UCL"))
+    rename(res$TDiNextEst$coverage_based, c(qiTD = "qTD",qiTD.LCL = "qTD.LCL", qiTD.UCL = "qTD.UCL"))
 
   }else if(diversity == 'PD'){
 
@@ -374,8 +374,8 @@ iNEXT.link <- function(data, diversity = 'TD', q = c(0,1,2), size = NULL,
                                nboot = nboot,col.tree = col.tree,row.tree = row.tree, type = PDtype)
     }
     res = INEXT_est
-    colnames(res$PDiNextEst$size_based[,c("qPD", "qPD.LCL", "qPD.UCL")]) <- c("qiPD", "qiPD.LCL", "qiPD.UCL")
-    colnames(res$PDiNextEst$coverage_based[,c("qPD", "qPD.LCL", "qPD.UCL")]) <- c("qiPD", "qiPD.LCL", "qiPD.UCL")
+    rename(res$PDiNextEst$size_based, c(qiPD = "qPD",qiPD.LCL = "qPD.LCL", qiPD.UCL = "qPD.UCL"))
+    rename(res$PDiNextEst$coverage_based, c(qiPD = "qPD",qiPD.LCL = "qPD.LCL", qiPD.UCL = "qPD.UCL"))
     names(res[[3]])[c(2:4,6:7)] <- c("qiPD", "PD_obs", "PD_asy", "qiPD.LCL", "qiPD.UCL")
 
   }else if (diversity == "FD" & FDtype == "tau_values") {
@@ -412,8 +412,8 @@ iNEXT.link <- function(data, diversity = 'TD', q = c(0,1,2), size = NULL,
                                 nboot = nboot, nT = nT, row.distM = row.distM, col.distM = col.distM)
     }
     res = INEXT_est
-    colnames(res$FDiNextEst$size_based[,c("qFD", "qFD.LCL", "qFD.UCL")]) <- c("qiFD", "qiFD.LCL", "qiFD.UCL")
-    colnames(res$FDiNextEst$coverage_based[,c("qFD", "qFD.LCL", "qFD.UCL")]) <- c("qiFD", "qiFD.LCL", "qiFD.UCL")
+    rename(res$FDiNextEst$size_based, c(qiFD = "qFD",qiFD.LCL = "qFD.LCL", qiFD.UCL = "qFD.UCL"))
+    rename(res$FDiNextEst$coverage_based, c(qiFD = "qFD",qiFD.LCL = "qFD.LCL", qiFD.UCL = "qFD.UCL"))
   }
   else if (diversity == "FD" & FDtype == "AUC") {
     if(0 %in% q){
@@ -450,8 +450,8 @@ iNEXT.link <- function(data, diversity = 'TD', q = c(0,1,2), size = NULL,
     }
     res = INEXT_est
     res[[1]] <- DataInfo.link(data, diversity = 'FD', row.distM = row.distM, col.distM = col.distM)
-    colnames(res$FDiNextEst$size_based[,c("qFD", "qFD.LCL", "qFD.UCL")]) <- c("qiFD", "qiFD.LCL", "qiFD.UCL")
-    colnames(res$FDiNextEst$coverage_based[,c("qFD", "qFD.LCL", "qFD.UCL")]) <- c("qiFD", "qiFD.LCL", "qiFD.UCL")
+    rename(res$FDiNextEst$size_based, c(qiFD = "qFD",qiFD.LCL = "qFD.LCL", qiFD.UCL = "qFD.UCL"))
+    rename(res$FDiNextEst$coverage_based, c(qiFD = "qFD",qiFD.LCL = "qFD.LCL", qiFD.UCL = "qFD.UCL"))
     names(res[[3]])[c(2:4,6:7)] <- c("qiFD", "FD_obs", "FD_asy", "qiFD.LCL", "qiFD.UCL")
   }
   
@@ -639,9 +639,7 @@ ObsAsy.link <- function(data, diversity = 'TD', q = seq(0, 2, 0.2), nboot = 30, 
 
         NetDiv = rbind(AsylinkTD(data, diversity = 'TD', q = q, datatype = datatype, nboot = nboot, conf = conf),
                        ObslinkTD(data, diversity = 'TD', q = q, datatype = datatype, nboot = nboot, conf = conf))
-        colnames(NetDiv[,c("qTD", "qTD.LCL", "qTD.UCL")]) <- c("qiTD", "qiTD.LCL", "qiTD.UCL")
-        colnames(NetDiv[,c("qTD", "qTD.LCL", "qTD.UCL")]) <- c("qiTD", "qiTD.LCL", "qiTD.UCL")
-
+        rename(NetDiv, c(qiTD = "qTD", qiTD.LCL = "qTD.LCL", qiTD.UCL = "qTD.UCL"))
   }
 
   if (diversity == 'PD') {
@@ -658,8 +656,7 @@ ObsAsy.link <- function(data, diversity = 'TD', q = seq(0, 2, 0.2), nboot = 30, 
                                           ObslinkPD(data = data,q = q,B = nboot,row.tree = row.tree,
                                                     col.tree = col.tree,conf = conf,PDtype = PDtype))
                                               
-                           colnames(NetDiv[,c("qPD", "qPD.LCL", "qPD.UCL")]) <- c("qiPD", "qiPD.LCL", "qiPD.UCL")
-                           colnames(NetDiv[,c("qPD", "qPD.LCL", "qPD.UCL")]) <- c("qiPD", "qiPD.LCL", "qiPD.UCL")
+                           rename(NetDiv, c(qiPD = "qPD", qiPD.LCL = "qPD.LCL", qiPD.UCL = "qPD.UCL"))
     
   }
 
@@ -677,8 +674,7 @@ ObsAsy.link <- function(data, diversity = 'TD', q = seq(0, 2, 0.2), nboot = 30, 
                                           ObslinkFD(data = data, q = q, datatype = datatype, nboot = nboot, conf = conf,
                                                     row.distM = row.distM, col.distM = col.distM, threshold = FDtau))
                                               
-                           colnames(NetDiv[,c("qFD", "qFD.LCL", "qFD.UCL")]) <- c("qiFD", "qiFD.LCL", "qiFD.UCL")
-                           colnames(NetDiv[,c("qFD", "qFD.LCL", "qFD.UCL")]) <- c("qiFD", "qiFD.LCL", "qiFD.UCL")
+                           rename(NetDiv, c(qiFD = "qFD", qiFD.LCL = "qFD.LCL", qiFD.UCL = "qFD.UCL"))
 
   }
 
@@ -696,8 +692,7 @@ ObsAsy.link <- function(data, diversity = 'TD', q = seq(0, 2, 0.2), nboot = 30, 
                                         ObslinkAUC(data = data, q = q, datatype = datatype, nboot = nboot, conf = conf,
                                                    row.distM = row.distM, col.distM = col.distM))
                                              
-                         colnames(NetDiv[,c("qFD", "qFD.LCL", "qFD.UCL")]) <- c("qiFD", "qiFD.LCL", "qiFD.UCL")
-                         colnames(NetDiv[,c("qFD", "qFD.LCL", "qFD.UCL")]) <- c("qiFD", "qiFD.LCL", "qiFD.UCL")
+                         rename(NetDiv, c(qiFD = "qFD", qiFD.LCL = "qFD.LCL", qiFD.UCL = "qFD.UCL"))
 
   }
 
@@ -857,6 +852,8 @@ estimateD.link = function(data, diversity = 'TD', q = c(0, 1, 2), base = "covera
                            diversity = 'TD', nboot = nboot,conf=conf,level = level)%>%
         mutate(Assemblage = assemblage)
     })%>%do.call("rbind",.)
+    
+    rename(div, c(qiTD = "qTD", qiTD.LCL = "qTD.LCL", qiTD.UCL = "qTD.UCL"))
 
     return(div)
   }else if(diversity == 'PD'){
@@ -978,16 +975,24 @@ estimateD.link = function(data, diversity = 'TD', q = c(0, 1, 2), base = "covera
                                                                 region_name = region_names[i], N = Ns[i]))%>%
       do.call('rbind',.)
 
+    rename(output, c(qiPD = "qPD", qiPD.LCL = "qPD.LCL", qiPD.UCL = "qPD.UCL"))
+    
     return(output)
   }else if(diversity == 'FD'& FDtype == 'tau_values'){
     output = estimatelinkFD(data, row.distM = row.distM, col.distM = col.distM, datatype = datatype, q = q,
                             base = base, threshold = FDtau, level = level, nboot = nboot,
                             conf = conf)
+    
+    rename(output, c(qiFD = "qFD", qiFD.LCL = "qFD.LCL", qiFD.UCL = "qFD.UCL"))
+    
     return(output)
   }else if(diversity == 'FD'& FDtype == 'AUC'){
     output = estimatelinkAUC(data, row.distM = row.distM, col.distM = col.distM, datatype = datatype, q = q,
                              base = base, level = level, nboot = nboot,
                              conf = conf)
+    
+    rename(output, c(qiFD = "qFD", qiFD.LCL = "qFD.LCL", qiFD.UCL = "qFD.UCL"))
+    
     return(output)
   }
 }
