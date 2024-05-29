@@ -519,10 +519,16 @@ ggiNEXT.link <- function(output, type = c(1,2,3), facet.var = "Assemblage", colo
   
   if (names(output)[1] == 'TDInfo') {
     diversity = 'TD'
+    output[[2]]$size_based <- rename(output[[2]]$size_based, c(qTD = "qiTD", qTD.LCL = "qiTD.LCL", qTD.UCL = "qiTD.UCL"))
+    output[[2]]$coverage_based <- rename(output[[2]]$coverage_based, c(qTD = "qiTD", qTD.LCL = "qiTD.LCL", qTD.UCL = "qiTD.UCL"))
   } else if (names(output)[1] == "PDInfo") {
     diversity = 'PD'
+    output[[2]]$size_based <- rename(output[[2]]$size_based, c(qPD = "qiPD", qPD.LCL = "qiPD.LCL", qPD.UCL = "qiPD.UCL"))
+    output[[2]]$coverage_based <- rename(output[[2]]$coverage_based, c(qPD = "qiPD", qPD.LCL = "qiPD.LCL", qPD.UCL = "qiPD.UCL"))
   } else if (names(output)[1] %in% "FDInfo") {
     diversity = 'FD'
+    output[[2]]$size_based <- rename(output[[2]]$size_based, c(qFD = "qiFD", qFD.LCL = "qiFD.LCL", qFD.UCL = "qiFD.UCL"))
+    output[[2]]$coverage_based <- rename(output[[2]]$coverage_based, c(qFD = "qiFD", qFD.LCL = "qiFD.LCL", qFD.UCL = "qiFD.UCL"))
   }
   
   if(diversity == 'TD'){
