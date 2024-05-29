@@ -738,11 +738,11 @@ ObsAsy.link <- function(data, diversity = 'TD', q = seq(0, 2, 0.2), nboot = 30, 
 #' @export
 ggObsAsy.link <- function(output){
   
-  if (colnames(output)[3] == 'qTD') {
+  if (colnames(output)[3] == 'qiTD') {
     diversity = 'TD'
-  } else if (colnames(output)[3] == 'qPD') {
+  } else if (colnames(output)[3] == 'qiPD') {
     diversity = 'PD'
-  } else if (colnames(output)[3] == 'qFD') {
+  } else if (colnames(output)[3] == 'qiFD') {
     diversity = 'FD'
   }
   
