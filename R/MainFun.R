@@ -740,10 +740,13 @@ ggObsAsy.link <- function(output){
   
   if (colnames(output)[3] == 'qiTD') {
     diversity = 'TD'
+    output <- rename(output, c(qTD = "qiTD", qTD.LCL = "qiTD.LCL", qTD.UCL = "qiTD.UCL"))
   } else if (colnames(output)[3] == 'qiPD') {
     diversity = 'PD'
+    output <- rename(output, c(qPD = "qiPD", qPD.LCL = "qiPD.LCL", qPD.UCL = "qiPD.UCL"))
   } else if (colnames(output)[3] == 'qiFD') {
     diversity = 'FD'
+    output <- rename(output, c(qFD = "qiFD", qFD.LCL = "qiFD.LCL", qFD.UCL = "qiFD.UCL"))
   }
   
   if(diversity == 'TD'){
