@@ -1808,8 +1808,8 @@ iNEXTPDlink = function (data, datatype = "abundance", col.tree = NULL, row.tree 
   index <- ObsAsy.link(data = data, diversity = "PD",row.tree = row.tree, col.tree  = col.tree,
                        q = c(0, 1, 2), PDtype = type, nboot = nboot, conf = 0.95)
   index = index[order(index$Network), ]
-  LCL <- index$qPD.LCL[index$Method == "Asymptotic"]
-  UCL <- index$qPD.UCL[index$Method == "Asymptotic"]
+  LCL <- index$qiPD.LCL[index$Method == "Asymptotic"]
+  UCL <- index$qiPD.UCL[index$Method == "Asymptotic"]
   index <- dcast(index, formula = Network + Order.q ~ Method,
                  value.var = "qiPD")
   index <- cbind(index, se = (UCL - index$Asymptotic)/qnorm(1 - (1 - conf)/2), LCL, UCL)
