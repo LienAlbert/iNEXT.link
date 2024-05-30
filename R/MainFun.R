@@ -12,17 +12,15 @@
 #' 
 #' @return a data.frame including basic data information.\cr\cr
 #' Basic information shared by TD, mean-PD and FD includes Network name (\code{Network}),
-#' observed interaction events (\code{n}), observed species richness in row assemblages (\code{S.obs(row)}), observed species richness in column assemblages (\code{S.obs(col)}), 
-#' the number of interactions (\code{Link.obs}), link percentage(\code{Connectance}), sample coverage estimate (\code{Coverage}).\cr\cr
+#' number of observed interaction events in the reference sample (\code{n}), number of observed species in row assemblage (\code{S.obs(row)}), number of observed species in column assemblage (\code{S.obs(col)}), 
+#' number of observed interactions in the reference sample (\code{Link.obs}), the proportion of links between species that are realized in the network matrix (\code{Connectance}), estimator of the sample coverage of the reference sample (\code{Coverage}).\cr\cr
 #' Other additional information is given below.\cr\cr
 #' (1) TD: the first ten frequency counts in the reference sample (\code{f1}--\code{f10}).\cr\cr
-#' (2) Mean-PD: the observed total branch length in the phylogenetic tree (\code{PD.obs}), 
-#' the number of singletons (\code{f1*}) and doubletons (\code{f2*}) in the node/branch abundance set, as well as the total branch length 
-#' of those singletons (\code{g1}) and of those doubletons (\code{g2}), and the mean reference time (\code{mean_T}).\cr\cr
-#' (3) FD (\code{FDtype = "AUC"}): the minimum distance among all non-diagonal elements in the distance matrix (\code{dmin}), the mean distance
-#' (\code{dmean}), and the maximum distance (\code{dmax}) in the distance matrix.\cr \cr
-#' (4) FD (\code{FDtype = "tau_values"}): the number of singletons and doubletons in the data (\code{f1}-\code{f2}), the number of singletons (\code{a1*}) and of doubletons (\code{a2*}) in the functional group,
-#' and the threshold of functional distinctiveness between any two species (\code{threshold}).\cr\cr.\cr\cr
+#' (2) Mean-PD: the number of those singletons and doubletons in the node/branch set (\code{f1*},\code{f2*}) , 
+#' the total branch length of those singletons (\code{g1}) and of those doubletons (\code{g2}) in the node/branch set,
+#' the observed total branch length in the phylogenetic tree (\code{PD.obs}),  and the product of column tree depth and row tree depth (\code{T1*T2}).\cr\cr
+#' (3) FD : the number of singletons and doubletons in the reference sample (\code{f1},\code{f2}), the number of singletons and doubletons in the functional group (\code{a1*},\code{a2*}),
+#' and the mean weighted pairwise distance between any two interactions (\code{d_mean}).\cr\cr.\cr\cr
 #' 
 #' 
 #' @examples
@@ -85,9 +83,9 @@ DataInfo.link <- function(data, diversity = 'TD', row.tree = NULL, col.tree = NU
 #' sampling uncertainty and constructing confidence intervals. Bootstrap replications are generally time consuming. Enter 0 to skip the bootstrap procedures. Default is \code{30}.
 #' @param conf a positive number < \code{1} specifying the level of confidence interval. Default is \code{0.95}.
 #' @return a matrix of estimated sample completeness with order q: 
-#'         \item{Order.q}{the network completeness of order q.}
-#'         \item{Estimate.SC}{the estimated (or observed) sample completeness of order q.}
-#'         \item{s.e.}{standard error of the estimated completeness.}
+#'         \item{Order.q}{the network completeness order of q.}
+#'         \item{Estimate.SC}{the estimated completeness of order q.}
+#'         \item{s.e.}{standard error of the estimated network completeness.}
 #'         \item{SC.LCL, SC.UCL}{the bootstrap lower and upper confidence limits for the expected network completeness of order q at the specified level (with a default value of \code{0.95}).}
 #'         \item{Dataset}{the dataset name.}
 #'
@@ -200,31 +198,29 @@ ggCompleteness.link <- function(output){
 #' @importFrom grDevices hcl
 #' 
 #' @return a list of three objects: \cr\cr
-#' (1) \code{$TDInfo} (\code{$PDInfo}, or \code{$FDInfo}) for summarizing data information for q = 0, 1 and 2. Refer to the output of \code{DataInfo3D} for details.
+#' (1) \code{$TDInfo} (\code{$PDInfo}, or \code{$FDInfo}) for summarizing data information for q = 0, 1 and 2. Refer to the output of \code{DataInfo.link} for details.
 #' (2) \code{$TDiNextEst}(\code{$PDiNextEst}, or \code{$FDiNextEst}) for showing network diversity estimates for rarefied and extrapolated samples along with related statistics. There are two data frames: \code{"$size_based"} and \code{"$coverage_based"}.
 #'    In \code{"$size_based"}, the output includes:
-#'    \item{Assemblage}{the name of assemblage.} 
-#'    \item{Order.q}{the diversity order of q.}
-#'    \item{m, mT}{the target sample size (or number of sampling units for incidence data).}
-#'    \item{Method}{Rarefaction, Observed, or Extrapolation, depending on whether the target sample size is less than, equal to, or greater than the size of the reference sample.}
-#'    \item{qTD, qPD, qFD}{the estimated diversity estimate.}
-#'    \item{qTD.LCL, qPD.LCL, qFD.LCL and qTD.UCL, qPD.UCL, qFD.UCL}{the bootstrap lower and upper confidence limits for the diversity of order q at the specified level (with a default value of 0.95).}
-#'    \item{SC}{the standardized coverage value.}
-#'    \item{SC.LCL, SC.UCL}{the bootstrap lower and upper confidence limits for coverage at the specified level (with a default value of 0.95).}
+#'    \item{Dataset}{the name of datasets.} 
+#'    \item{Order.q}{the network diversity order of q.}
+#'    \item{m}{the target standardized sample size.}
+#'    \item{Method}{Rarefaction, Observed, or Extrapolation, depending on whether the size m is less than, equal to, or greater than the reference sample size.}
+#'    \item{qiTD, qiPD, qiFD}{the estimated network diversity of order q for a sample of size m.}
+#'    \item{qiTD.LCL, qiPD.LCL, qiFD.LCL and qiTD.UCL, qiPD.UCL, qiFD.UCL}{the bootstrap lower and upper confidence limits for the network diversity of order q at the level specified in the settings (with a default value of 0.95).}
+#'    \item{SC}{the estimated network coverage for a sample of size m.}
+#'    \item{SC.LCL, SC.UCL}{the bootstrap lower and upper confidence limits for the expected sample coverage at the level specified in the settings (with a default value of 0.95).}
 #'    \item{Reftime}{the reference times for PD.}
-#'    \item{Type}{\code{"PD"} (effective total branch length) or \code{"meanPD"} (effective number of equally divergent lineages) for PD.}
-#'    \item{Tau}{the threshold of functional distinctiveness between any two species for FD (under \code{FDtype = tau_values}).}
+#'    \item{Type}{\code{"PD"} (phylogenetic network diversity of effective total branch length),\code{"meanPD"} (effective number of equally divergent lineages) for PD.}
 #'  Similar output is obtained for \code{"$coverage_based"}. \cr\cr
 #' (3) \code{$TDAsyEst}(\code{$PDAsyEst}, or \code{$FDAsyEst}): for showing asymptotic diversity estimates along with related statistics:
-#'    \item{Assemblage}{the name of assemblage.} 
-#'    \item{qTD, qPD, qFD}{the diversity order of q.}
-#'    \item{TD_obs, PD_obs, FD_obs}{the observed diversity.}
-#'    \item{TD_asy, PD_asy, FD_asy}{the asymptotic diversity estimate.}
-#'    \item{s.e.}{standard error of asymptotic diversity.}
-#'    \item{qTD.LCL, qPD.LCL, qFD.LCL and qTD.UCL, qPD.UCL, qFD.UCL}{the bootstrap lower and upper confidence limits for asymptotic diversity at the specified level (with a default value of 0.95).}
+#'    \item{Dataset}{the name of datasets.} 
+#'    \item{qTD, qPD, qFD}{the network diversity order of q.}
+#'    \item{TD_obs, PD_obs, FD_obs}{the observed network diversity.}
+#'    \item{TD_asy, PD_asy, FD_asy}{the asymptotic network diversity estimate.}
+#'    \item{s.e.}{standard error of asymptotic network diversity.}
+#'    \item{qiTD.LCL, qiPD.LCL, qiFD.LCL and qiTD.UCL, qiPD.UCL, qiFD.UCL}{the bootstrap lower and upper confidence limits for asymptotic network diversity at the specified level (with a default value of 0.95).}
 #'    \item{Reftime}{the reference times for PD.}
-#'    \item{Type}{\code{"PD"} (effective total branch length) or \code{"meanPD"} (effective number of equally divergent lineages) for PD.}
-#'    \item{Tau}{the threshold of functional distinctiveness between any two species for FD (under \code{FDtype = tau_values}).}
+#'    \item{Type}{\code{"PD"} (phylogenetic network diversity of effective total branch length),\code{"meanPD"} (effective number of equally divergent lineages) for PD.}
 #' 
 #' 
 #' @examples
@@ -595,15 +591,14 @@ ggiNEXT.link <- function(output, type = c(1,2,3), facet.var = "Assemblage", colo
 #' @param FDtype (argument only for \code{diversity = "FD"}), select FD type: \code{FDtype = "tau_values"} for qiFD under specified threshold values, or \code{FDtype = "AUC"} (area under the curve of tau-profile) for an overall qiFD which integrates all threshold values between zero and one. Default is \code{"AUC"}.  
 #' @param FDtau (argument only for \code{diversity = "FD"} and \code{FDtype = "tau_values"}), a numerical vector between 0 and 1 specifying tau values (threshold levels). If \code{NULL} (default), then threshold is set to be the mean distance between any two individuals randomly selected from the pooled assemblage (i.e., quadratic entropy).
 #' @return a table of diversity table including the following arguments.
-#' \item{Order.q}{the diversity order of q.}
-#' \item{qiTD, qiPD, qiFD}{the estimated asymptotic diversity or observed diversity of order q.}
-#' \item{s.e.}{standard error of diversity.}
-#' \item{qiTD.LCL, qiPD.LCL, qiFD.LCL and qiTD.UCL, qiPD.UCL, qiFD.UCL}{the bootstrap lower and upper confidence limits for the diversity of order q at the specified level (with a default value of \code{0.95}).}
-#' \item{Assemblage (or Network)}{the network name.}
+#' \item{Dataset}{the name of datasets.}
+#' \item{Order.q}{the network diversity order of q.}
+#' \item{qiTD, qiPD, qiFD}{the asymptotic/observed network network diversity estimates of order q.}
+#' \item{s.e.}{standard error of the estimated network diversity.}
+#' \item{qiTD.LCL, qiPD.LCL, qiFD.LCL and qiTD.UCL, qiPD.UCL, qiFD.UCL}{the bootstrap lower and upper confidence limits for the network diversity of order q at the specified level (with a default value of \code{0.95}).}
 #' \item{Method}{\code{"Asymptotic"} means asymptotic network diversity and \code{"Observed"} means observed network diversity.}
 #' \item{Reftime}{the reference times for qiPD.}
-#' \item{Type}{\code{"PD"} (effective total branch length) or \code{"meanPD"} (effective number of equally divergent lineages) for qiPD.}
-#' \item{Tau}{the threshold of functional distinctiveness between any two species for qiFD (under \code{FDtype = tau_values}).}
+#' \item{Type}{\code{"PD"} (phylogenetic network diversity of effective total branch length),\code{"meanPD"} (effective number of equally divergent lineages) for qiPD.}
 #'
 #' @examples
 #' # Compute the observed and asymptotic taxonomic network diversity 
@@ -612,16 +607,20 @@ ggiNEXT.link <- function(output, type = c(1,2,3), facet.var = "Assemblage", colo
 #' data(beetles_plotA)
 #' output_ObsAsy_qiTD = ObsAsy.link(data = beetles_plotA, diversity = 'TD', q = seq(0, 2, 0.2))
 #' output_ObsAsy_qiTD
-#' “‰’µ“Û•Ð
+#' 
 #'
-#' ## Phylogenetic diversity
+#' # Compute the observed and asymptotic phylogenetic network diversity
+#' # for interaction data with order q between 0 and 2 
+#' # (in increments of 0.2 by default)
 #' data(beetles_plotA)
 #' data(beetles_col_tree)
 #' output_ObsAsy_qiPD = ObsAsy.link(data = beetles_plotA, diversity = 'PD', q = seq(0, 2, 0.2), col.tree = beetles_col_tree)
 #' output_ObsAsy_qiPD
 #'
 #'
-#' ## Functional diversity with thresholds integrating from 0 to 1
+#' # Compute the observed and asymptotic functional network diversity
+#' # for interaction data with order q between 0 and 2 and FDtype = "AUC"
+#' # (in increments of 0.25 by default)
 #' data(beetles_plotA)
 #' data(beetles_col_distM)
 #' output_ObsAsy_qiFD = ObsAsy.link(data = beetles_plotA, diversity = 'FD', q = seq(0, 2, 0.25), col.distM = beetles_col_distM, FDtype = "AUC", nboot = 10)
@@ -716,31 +715,30 @@ ObsAsy.link <- function(data, diversity = 'TD', q = seq(0, 2, 0.2), nboot = 30, 
 #' @return a figure of asymptotic or empirical (observed) diversity in q-profile.\cr\cr
 #'
 #' @examples
-#' ## Taxonomic diversity
-#' data(beetles)
-#' output1 = ObsAsy.link(data = beetles, diversity = 'TD', q = seq(0, 2, 0.2))
-#' ggObsAsy.link(output1)
+#' # Plot q-profile of taxonomic network diversity for interaction data
+#' # with order q between 0 and 2 (in increments of 0.2 by default).
+#' data(beetles_plotA)
+#' output_ObsAsy_qiTD = ObsAsy.link(data = beetles_plotA, diversity = 'TD', q = seq(0, 2, 0.2))
+#' ggObsAsy.link(output_ObsAsy_qiTD)
 #'
 #'
-#' ## Phylogenetic diversity
-#' data(beetles)
+#' # Plot q-profile of phylogenetic network diversity for interaction data
+#' # with order q between 0 and 2 (in increments of 0.2 by default).
+#' data(beetles_plotA)
 #' data(beetles_col_tree)
-#' output2 = ObsAsy.link(data = beetles, diversity = 'PD', q = seq(0, 2, 0.2), col.tree = beetles_col_tree)
-#' ggObsAsy.link(output2)
+#' output_ObsAsy_qiPD = ObsAsy.link(data = beetles_plotA, diversity = 'PD', q = seq(0, 2, 0.2), col.tree = beetles_col_tree)
+#' ggObsAsy.link(output_ObsAsy_qiPD)
 #'
 #'
-#' ## Functional diversity under single threshold
-#' data(beetles)
+#' # Plot q-profile of functional network diversity for interaction data
+#' # with order q between 0 and 2 (in increments of 0.2 by default)
+#' # under tau values from 0 to 1
+#' data(beetles_plotA)
 #' data(beetles_col_distM)
-#' output3 = ObsAsy.link(data = beetles, diversity = 'FD', q = seq(0, 2, 0.2), col.distM = beetles_col_distM, FDtype = "tau_values")
-#' ggObsAsy.link(output3)
+#' output_ObsAsy_qiFD = ObsAsy.link(data = beetles_plotA, diversity = 'FD', q = seq(0, 2, 0.25), col.distM = beetles_col_distM, FDtype = "AUC", nboot = 10)
+#' ggObsAsy.link(output_ObsAsy_qiFD)
 #'
-#'
-#' ## Functional diversity with thresholds integrating from 0 to 1
-#' data(beetles)
-#' data(beetles_col_distM)
-#' output4 = ObsAsy.link(data = beetles, diversity = 'FD', q = seq(0, 2, 0.25), col.distM = beetles_col_distM, FDtype = "AUC", nboot = 0)
-#' ggObsAsy.link(output4)
+
 #' @export
 ggObsAsy.link <- function(output){
   
@@ -803,44 +801,41 @@ ggObsAsy.link <- function(output){
 #' @param FDtype (required only when \code{diversity = "FD"}), select FD type: \code{FDtype = "tau_values"} for FD under specified threshold values, or \code{FDtype = "AUC"} (area under the curve of tau-profile) for an overall FD which integrates all threshold values between zero and one. Default is \code{"AUC"}.
 #' @param FDtau (required only when \code{diversity = "FD"} and \code{FDtype = "tau_values"}), a numerical vector between 0 and 1 specifying tau values (threshold levels). If \code{NULL} (default), then threshold is set to be the mean distance between any two individuals randomly selected from the pooled assemblage (i.e., quadratic entropy).
 #' @return a \code{data.frame} of diversity table including the following arguments:
-#' \item{Assemblage}{the assemblage name.}
-#' \item{m}{the corresponding sample size for the standardized coverage value.}
-#' \item{Method}{Rarefaction, Observed, or Extrapolation, depending on whether the target coverage is less than, equal to, or greater than the coverage of the reference sample.}
+#' \item{Dataset}{the name of datasets.}
 #' \item{Order.q}{the diversity order of q.}
 #' \item{SC}{the target standardized coverage value.}
-#' \item{qTD, qPD, qFD}{the estimated diversity of order q for the target coverage value. The estimate for complete coverage (or \code{level = 1}) represents the estimated asymptotic diversity.} 
-#' \item{s.e.}{standard error of diversity estimate.}
-#' \item{qTD.LCL, qPD.LCL, qFD.LCL and qTD.UCL, qPD.UCL, qFD.UCL}{the bootstrap lower and upper confidence limits for the diversity of order q at the specified level (with a default value of \code{0.95}).}
+#' \item{m}{the corresponding sample size for the standardized completeness.}
+#' \item{Method}{Rarefaction, Observed, or Extrapolation, depending on whether the target coverage is less than, equal to, or greater than the coverage of the reference sample.}
+
+#' \item{qiTD, qiPD, qiFD}{the estimated network diversity of order q for the target coverage value The estimate for complete coverage (or \code{level = 1}) represents the estimated asymptotic diversity.} 
+#' \item{s.e.}{standard error of network diversity estimate.}
+#' \item{qiTD.LCL, qiPD.LCL, qiFD.LCL and qiTD.UCL, qiPD.UCL, qiFD.UCL}{the bootstrap lower and upper confidence limits for the network diversity of order q at the specified level (with a default value of \code{0.95}).}
 #' \item{Reftime}{reference times for PD.}
-#' \item{Type}{\code{"PD"} (effective total branch length) or \code{"meanPD"} (effective number of equally divergent lineages).}
-#' \item{Tau}{the threshold of functional distinctiveness between any two species.}
+#' \item{Type}{\code{"PD"} (phylogenetic network diversity of effective total branch length), \code{"meanPD"} (effective number of equally divergent lineages).}
 #'
 #' @examples
 #' \donttest{
-#' ## Taxonomic diversity
-#' data(beetles)
-#' output1 <- estimateD.link(beetles, diversity = 'TD', 
-#'                           base = "coverage", level = 0.7, nboot = 30)
-#' output1
+#' # Taxonomic network diversity for interaction data with two target coverages (93% and 97%)
+#' data(beetles_plotA)
+#' output_est_qiTD <- estimateD.link(beetles_plotA, diversity = 'TD', q = c(0,1,2),
+#'                                   base = "coverage", level = c(0.93, 0.97))
+#' output_est_qiTD
 #' 
-#' ## Phylogenetic diversity
-#' output2 <- estimateD.link(beetles, diversity = 'PD', 
-#'                           base = "size", level = NULL, nboot = 30, col.tree = beetles_col_tree)
-#' output2
+#' # Phylogenetic network diversity for interaction data with two target sizes (1500 and 3000) “‰’µ“Û•Ð
+#' data(beetles_plotA)
+#' data(beetles_col_tree)
+#' output_est_qiPD <- estimateD.link(beetles_plotA, diversity = 'PD', 
+#'                                   base = "size", level = c(1500, 3000), col.tree = beetles_col_tree)
+#' output_est_qiPD
 #' 
-#' ## Functional diversity under single threshold
-#' data(beetles)
+#' ## Functional network diversity for interaction data with two target coverages (93% and 97%)
+#' data(beetles_plotA)
 #' data(beetles_col_distM)
-#' output3 = estimateD.link(data = beetles, diversity = 'FD', col.distM = beetles_col_distM, FDtype = "tau_values")
-#' output3
+#' output_est_qiFD = estimateD.link(data = beetles_plotA, diversity = 'FD', q = c(0, 1, 2),
+#'                                  base = "coverage", level = c(0.93, 0.97), nboot = 10,
+#'                                  col.distM = beetles_col_distM, FDtype = "AUC")
+#' output_est_qiFD
 #'
-#'
-#' ## Functional diversity with thresholds integrating from 0 to 1
-#' data(beetles)
-#' data(beetles_col_distM)
-#' output4 = estimateD.link(data = beetles, diversity = 'FD',
-#'                          col.distM = beetles_col_distM, FDtype = "AUC", nboot = 0)
-#' output4
 #' 
 #' }
 #' @export
@@ -901,13 +896,13 @@ estimateD.link = function(data, diversity = 'TD', q = c(0, 1, 2), base = "covera
         n = sum(data_2d)
         if(base == 'coverage'){
           size_m = sapply(level, function(i) coverage_to_size(data_2d, i, datatype='abundance'))
-        }else if(base == 'size'){
+        }else{
           if(is.null(level)){
             size_m = n
           }else{
             size_m = level
           }
-          level = iNEXT.3D:::Coverage(data_2d,m= n, datatype = 'abundance')
+          level = iNEXT.3D:::Coverage(data_2d,m= size_m, datatype = 'abundance')
 
         }
 
@@ -964,10 +959,10 @@ estimateD.link = function(data, diversity = 'TD', q = c(0, 1, 2), base = "covera
         
         ##
         len = length(q)
-        res = data.frame(Assemblage = rep(region_name,len),
+        res = data.frame(Assemblage = rep(region_name,len*length(size_m)),
                          Order.q = q,
-                         SC = rep(level, rep(len,length(size_m))),
-                         m = rep(size_m,rep(len,length(size_m))),
+                         SC = as.vector(sapply(1:length(size_m), function(i) rep(level[i],3))),
+                         m = as.vector(sapply(1:length(size_m), function(i) rep(size_m[i],3))),
                          Method = rep(ifelse(level > ref, 'Extrapolation', ifelse(level == ref, 'Observed', 'Rarefaction')), each = len),
                          qPD = qPDm,
                          s.e. = PD.sd,
@@ -1031,43 +1026,39 @@ estimateD.link = function(data, diversity = 'TD', q = c(0, 1, 2), base = "covera
 #' @param FDtau (required only when \code{diversity = "FD"} and \code{FDtype = "tau_value"}), a numerical vector between 0 and 1 specifying tau values (threshold levels). If \code{NULL} (default), then threshold is set to be the mean distance between any two individuals randomly selected from the pooled assemblage (i.e., quadratic entropy).
 #' @param FDcut_number (required only when \code{diversity = "FD"} and \code{FDtype = "AUC"}), a numeric number to split zero to one into several equal-spaced length. Default is \code{30}.
 #' @return A list of seven matrices with three diversity dimensions and four dissimilarity measures.
-#' \item{Dataset}{the datasets name.}
-#' \item{Order.q}{the diversity order of q.}
+#' \item{Dataset}{the name of datasets.}
+#' \item{Order.q}{the network diversity order of q.}
 #' \item{SC}{the target standardized coverage value. The observed coverage and extrapolation limit for beta diversity are defined the same as those for alpha diversity. For \code{q = 0}, the extrapolation can be extended to a maximum coverage value \code{C(2n, alpha)} = coverage value of twice the alpha reference sample size; for \code{q = 1} and \code{2}, target coverage can be extended to \code{1} (complete coverage) if data are not sparse.}
 #' \item{Size}{the corresponding sample size for the standardized coverage value.}
-#' \item{Alpha/Beta/Gamma/Dissimilarity}{the estimated diversity or dissimilarity of order q for the target coverage value. The estimate for complete coverage (or \code{level = 1}) represents the estimated asymptotic diversity.}
+#' \item{Alpha/Beta/Gamma/Dissimilarity}{the estimated diversity or dissimilarity of order q for the target coverage value. The estimate for complete coverage (or \code{level = 1}) represents the estimated asymptotic network diversity.}
 #' \item{Method}{Rarefaction, Observed, or Extrapolation, depending on whether the target coverage is less than, equal to, or greater than the coverage of the reference sample. (For beta diversity, observed coverage is defined as the coverage of the alpha reference sample).}
-#' \item{s.e.}{standard error of diversity estimate.}
-#' \item{LCL, UCL}{the bootstrap lower and upper confidence limits for the diversity of order q at the specified level (with a default value of \code{0.95}).}
-#' \item{Diversity}{\code{"TD"} (taxonomic diversity), \code{"PD"} (phylogenetic diversity of effective total branch length), \code{"meanPD"} (phylogenetic diversity of effective number of equally divergent lineages), \code{"FD_tau"} (functional diversity under a single tau), \code{"FD_AUC"} (functional diversity by integrating all threshold values between zero and one.}
-#' \item{Tau}{the threshold of functional distinctiveness between any two species.}
+#' \item{s.e.}{standard error of network diversity estimate.}
+#' \item{LCL, UCL}{the bootstrap lower and upper confidence limits for the network diversity of order q at the specified level (with a default value of \code{0.95}).}
+#' \item{Diversity}{\code{"TD"} (taxonomic network diversity), \code{"PD"} (phylogenetic diversity of effective total branch length), \code{"meanPD"} (phylogenetic diversity of effective number of equally divergent lineages), \code{"FD_tau"} (functional diversity under a single tau), \code{"FD_AUC"} (functional diversity by integrating all threshold values between zero and one.}
 #' 
 #' 
 #' @examples
-#' ## Taxonomic diversity
-#' data(beetles)
-#' output1 = iNEXTbeta.link(data = beetles, diversity = 'TD', level = seq(0.5, 0.9, 0.4), q = c(0, 1, 2))
-#' output1
+#' ## Taxonomic network diversity for interaction data
+#' # Coverage-based standardized alpha/beta/gamma/dissimilarity network diversity estimates and related statistics
+#' data(beetles_plotA)
+#' output_beta_qiTD = iNEXTbeta.link(data = beetles_plotA, diversity = 'TD', level = NULL, q = c(0, 1, 2))
+#' output_beta_qiTD
 #'
-#' ## Phylogenetic diversity
-#' data(beetles)
+#' ## Phylogenetic network diversity for interaction data
+#' # Coverage-based standardized alpha/beta/gamma/dissimilarity network diversity estimates and related statistics
+#' data(beetles_plotA)
 #' data(beetles_col_tree)
-#' output2 = iNEXTbeta.link(data = beetles, diversity = 'PD', level = seq(0.5, 0.9, 0.4), q = c(0, 1, 2), col.tree = beetles_col_tree)
-#' output2
+#' output_beta_qiPD = iNEXTbeta.link(data = beetles, diversity = 'PD', level = NULL, q = c(0, 1, 2), col.tree = beetles_col_tree, nboot = 10)
+#' output_beta_qiPD
 #'
 #'
-#' ## Functional diversity under single threshold
-#' data(beetles)
+#' ## Functional network diversity for interaction data
+#' # Coverage-based standardized alpha/beta/gamma/dissimilarity network diversity estimates and related statistics
+#' data(beetles_plotA)
 #' data(beetles_col_distM)
-#' output3 = iNEXTbeta.link(data = beetles, diversity = 'FD', level = seq(0.5, 0.9, 0.4), q = c(0, 1, 2), col.distM = beetles_col_distM, FDtype = "tau_value")
-#' output3
+#' output_beta_qiFD = iNEXTbeta.link(data = beetles_plotA, diversity = 'FD', level = NULL, q = c(0, 1, 2), col.distM = beetles_col_distM, FDtype = "AUC")
+#' output_beta_qiFD
 #'
-#'
-#' ## Functional diversity with thresholds integrating from 0 to 1
-#' data(beetles)
-#' data(beetles_col_distM)
-#' output4 = iNEXTbeta.link(data = beetles, diversity = 'FD', level = seq(0.5, 0.9, 0.4), q = c(0, 1, 2), col.distM = beetles_col_distM, FDtype = "AUC", nboot = 0)
-#' output4
 #' @references
 #' Chao, A., Chazdon, R. L., Colwell, R. K. and Shen, T.-J.(2005). A new statistical approach for assessing similarity of species composition with incidence and abundance data. Ecology Letters 8, 148-159. (pdf file) Spanish translation in pp. 85-96 of Halffter, G. Soberon, J., Koleff, P. and Melic, A. (eds) 2005 Sobre Diversidad Biologica: el Sognificado de las Diversidades Alfa, Beta y Gamma. m3m-Monografias 3ercer Milenio, vol. 4, SEA, CONABIO, Grupo DIVERSITAS & CONACYT, Zaragoza. IV +242 pp.
 #' Chiu, C.-H., Jost, L. and Chao*, A. (2014). Phylogenetic beta diversity, similarity, and differentiation measures based on Hill numbers. Ecological Monographs 84, 21-44.
@@ -1208,34 +1199,31 @@ iNEXTbeta.link = function(data, diversity = 'TD', level = NULL,
 #' @return a figure for gamma, alpha, and beta diversity or four dissimilarity measures.
 #' 
 #' @examples
-#' ## Taxonomic diversity
-#' data(beetles)
-#' output1 = iNEXTbeta.link(data = beetles, diversity = 'TD', level = seq(0.5, 0.9, 0.4), q = c(0, 1, 2))
-#' ggiNEXTbeta.link(output1, type = 'B')
-#' ggiNEXTbeta.link(output1, type = 'D')
+#' ## Taxonomic network diversity for interaction data
+#' # Plot coverage-based standardized alpha/beta/gamma/dissimilarity network diversity estimates and related statistics
+#' data(beetles_plotA)
+#' output_beta_qiTD = iNEXTbeta.link(data = beetles_plotA, diversity = 'TD', level = NULL, q = c(0, 1, 2))
+#' ggiNEXTbeta.link(output_beta_qiTD, type = 'B')
+#' ggiNEXTbeta.link(output_beta_qiTD, type = 'D')
 #'
-#' ## Phylogenetic diversity
-#' data(beetles)
+#' ## Phylogenetic network diversity for interaction data
+#' # Plot coverage-based standardized alpha/beta/gamma/dissimilarity network diversity estimates and related statistics
+#' data(beetles_plotA)
 #' data(beetles_col_tree)
-#' output2 = iNEXTbeta.link(data = beetles, diversity = 'PD', level = seq(0.5, 0.9, 0.4), q = c(0, 1, 2), col.tree = beetles_col_tree)
-#' ggiNEXTbeta.link(output2, type = 'B')
-#' ggiNEXTbeta.link(output2, type = 'D')
+#' output_beta_qiPD = iNEXTbeta.link(data = beetles_plotA, diversity = 'PD', level = NULL, q = c(0, 1, 2), col.tree = beetles_col_tree, nboot = 10)
+#' ggiNEXTbeta.link(output_beta_qiPD, type = 'B')
+#' ggiNEXTbeta.link(output_beta_qiPD, type = 'D')
 #'
 #'
-#' ## Functional diversity under single threshold
-#' data(beetles)
+#' ## Functional network diversity for interaction data
+#' # Plot coverage-based standardized alpha/beta/gamma/dissimilarity network diversity estimates and related statistics
+#' data(beetles_plotA)
 #' data(beetles_col_distM)
-#' output3 = iNEXTbeta.link(data = beetles, diversity = 'FD', level = seq(0.5, 0.9, 0.4), q = c(0, 1, 2), col.distM = beetles_col_distM, FDtype = "tau_value")
-#' ggiNEXTbeta.link(output3, type = 'B')
-#' ggiNEXTbeta.link(output3, type = 'D')
+#' output_beta_qiFD = iNEXTbeta.link(data = beetles_plotA, diversity = 'FD', level = NULL, q = c(0, 1, 2), col.distM = beetles_col_distM, FDtype = "AUC")
+#' ggiNEXTbeta.link(output_beta_qiFD, type = 'B')
+#' ggiNEXTbeta.link(output_beta_qiFD, type = 'D')
 #'
 #'
-#' ## Functional diversity with thresholds integrating from 0 to 1
-#' data(beetles)
-#' data(beetles_col_distM)
-#' output4 = iNEXTbeta.link(data = beetles, diversity = 'FD', level = seq(0.5, 0.9, 0.4), q = c(0, 1, 2), col.distM = beetles_col_distM, FDtype = "AUC", nboot = 0)
-#' ggiNEXTbeta.link(output4, type = 'B')
-#' ggiNEXTbeta.link(output4, type = 'D')
 #' @export
 
 ggiNEXTbeta.link <- function(output, type = c('B', 'D')){
@@ -1386,20 +1374,20 @@ ggiNEXTbeta.link <- function(output, type = c('B', 'D')){
 #' @param SC a standardized coverage for calculating specialization index. It is used when \code{method = 'Estimated'}. If \code{NULL}, then this function computes the diversity estimates for the minimum sample coverage among all samples extrapolated to double reference sizes (\code{C = Cmax}).
 #' @return A list of several tables containing estimated (or observed) evenness with order q.\cr
 #'         Each tables represents a class of specialization.
-#'         \item{Order.q}{the diversity order of q.}
+#'         \item{Order.q}{the network diversity order of q.}
 #'         \item{Specialization}{the specialization of order q.}
 #'         \item{s.e.}{standard error of evenness.}
 #'         \item{Spec.LCL, Spec.UCL}{the bootstrap lower and upper confidence limits for the evenness of order q at the specified level (with a default value of \code{0.95}).}
 #'         \item{Method}{\code{"Estimated"} or \code{"Observed"}.}
 #'         \item{SC}{the target standardized coverage value. (only when \code{method = "Estimated"})}
-#'         \item{Network}{the network name.}
+#'         \item{Dataset}{the Dataset name.}
 #'         \item{class}{specialization class.}
 #'         
 #'
 #' @examples
-#' data(beetles)
-#' output = Spec.link(beetles)
-#' output
+#' data(beetles_plotA)
+#' output_spec = Spec.link(beetles_plotA)
+#' output_spec
 #' @export
 
 Spec.link <- function(data, q = seq(0, 2, 0.2),
@@ -1583,9 +1571,9 @@ Spec.link <- function(data, q = seq(0, 2, 0.2),
 #' @return a figure of estimated sample completeness with order q
 #'
 #' @examples
-#' data(beetles)
-#' output = Spec.link(beetles)
-#' ggSpec.link(output)
+#' data(beetles_plotA)
+#' output_spec = Spec.link(beetles_plotA)
+#' ggSpec.link(output_spec)
 #' @export
 
 ggSpec.link = function (output)
