@@ -43,6 +43,14 @@
 DataInfo.link <- function(data, diversity = 'TD', row.tree = NULL, col.tree = NULL, row.distM = NULL, col.distM = NULL){
 
   datatype = "abundance"
+  data_new <- list()
+  for(i in 1:length(data)){
+    if(nrow(data[[i]]) > ncol(data[[i]])){
+      data_new[[i]] <- as.data.frame(t(data[[i]]))
+    }else{
+      data_new[[i]] <- data[[i]]
+    }
+  }
   
   if(diversity == 'PD'){
 
@@ -66,6 +74,15 @@ DataInfo.link <- function(data, diversity = 'TD', row.tree = NULL, col.tree = NU
       do.call(rbind,.)
     rownames(table) <- names(data)
     table = tibble::rownames_to_column(table, var = "Networks")
+  }
+  for(i in 1:length(data)){
+    if(dim(data_new[[i]])[1] == dim(data[[i]])[1] & dim(data_new[[i]])[2] == dim(data[[i]])[2]){
+      table[i,] <- table[i,]
+    }else{
+      temp <- c(table[i,3], table[i,4])
+      table[i,3] <- temp[2]
+      table[i,4] <- temp[1]
+    }
   }
   return(table)
 
@@ -101,6 +118,14 @@ DataInfo.link <- function(data, diversity = 'TD', row.tree = NULL, col.tree = NU
 Completeness.link <- function(data, q = seq(0, 2, 0.2), nboot = 30, conf = 0.95){
   
   datatype = "abundance"
+  
+  for(i in 1:length(data)){
+    if(nrow(data[[i]]) > ncol(data[[i]])){
+      data[[i]] <- as.data.frame(t(data[[i]]))
+    }else{
+      data[[i]] <- data[[i]]
+    }
+  }
   
   data_long <- lapply(data, function(tab){
     as.matrix(tab)%>%c()}
@@ -261,6 +286,13 @@ iNEXT.link <- function(data, diversity = 'TD', q = c(0,1,2), size = NULL,
   
   datatype = "abundance"
   nT = NULL
+  for(i in 1:length(data)){
+    if(nrow(data[[i]]) > ncol(data[[i]])){
+      data[[i]] <- as.data.frame(t(data[[i]]))
+    }else{
+      data[[i]] <- data[[i]]
+    }
+  }
   
   # User interface
   TYPE <- c("abundance", "incidence", "incidence_freq", "incidence_raw")
@@ -631,6 +663,13 @@ ObsAsy.link <- function(data, diversity = 'TD', q = seq(0, 2, 0.2), nboot = 30, 
                         row.tree = NULL, col.tree = NULL, PDtype = "meanPD", row.distM = NULL, col.distM = NULL, FDtype = "AUC", FDtau = NULL){
   
   datatype = "abundance"
+  for(i in 1:length(data)){
+    if(nrow(data[[i]]) > ncol(data[[i]])){
+      data[[i]] <- as.data.frame(t(data[[i]]))
+    }else{
+      data[[i]] <- data[[i]]
+    }
+  }
   
   if ( !(diversity %in% c('TD', 'PD', 'FD')) )
     stop("Please select one of below diversity: 'TD', 'PD', 'FD'", call. = FALSE)
@@ -845,6 +884,13 @@ estimateD.link = function(data, diversity = 'TD', q = c(0, 1, 2), base = "covera
                           row.distM = NULL, col.distM = NULL, FDtype = "AUC", FDtau = NULL){
   
   datatype = "abundance"
+  for(i in 1:length(data)){
+    if(nrow(data[[i]]) > ncol(data[[i]])){
+      data[[i]] <- as.data.frame(t(data[[i]]))
+    }else{
+      data[[i]] <- data[[i]]
+    }
+  }
   
   if(diversity == 'TD'){
 
@@ -1071,6 +1117,13 @@ iNEXTbeta.link = function(data, diversity = 'TD', level = NULL,
                           FDtype = "AUC", FDtau = NULL, FDcut_number = 30){
   
   datatype = 'abundance'
+  for(i in 1:length(data)){
+    if(nrow(data[[i]]) > ncol(data[[i]])){
+      data[[i]] <- as.data.frame(t(data[[i]]))
+    }else{
+      data[[i]] <- data[[i]]
+    }
+  }
   
   if(inherits(data[[1]], "data.frame")){dat = list(data); }else{dat = data}
 
@@ -1399,6 +1452,13 @@ Spec.link <- function(data, q = seq(0, 2, 0.2),
   
   datatype = "abundance"
   diversity = 'TD'
+  for(i in 1:length(data)){
+    if(nrow(data[[i]]) > ncol(data[[i]])){
+      data[[i]] <- as.data.frame(t(data[[i]]))
+    }else{
+      data[[i]] <- data[[i]]
+    }
+  }
   
   if (diversity == 'TD'){
     long = lapply(data, function(da){da%>%as.data.frame()%>%gather(key = "col_sp", value = "abundance")%>%.[,2]})
