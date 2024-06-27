@@ -286,11 +286,12 @@ iNEXT.link <- function(data, diversity = 'TD', q = c(0,1,2), size = NULL,
   
   datatype = "abundance"
   nT = NULL
+  data_new <- list()
   for(i in 1:length(data)){
     if(nrow(data[[i]]) > ncol(data[[i]])){
-      data[[i]] <- as.data.frame(t(data[[i]]))
+      data_new[[i]] <- as.data.frame(t(data[[i]]))
     }else{
-      data[[i]] <- data[[i]]
+      data_new[[i]] <- data[[i]]
     }
   }
   
@@ -322,9 +323,18 @@ iNEXT.link <- function(data, diversity = 'TD', q = c(0,1,2), size = NULL,
   res = list()
   if(diversity == 'TD'){
     ## 1. datainfo
-    datainfo = DataInfo.link(data = data, diversity = diversity)
+    datainfo = DataInfo.link(data = data_new, diversity = "TD")
+    for(i in 1:length(data)){
+      if(dim(data_new[[i]])[1] == dim(data[[i]])[1] & dim(data_new[[i]])[2] == dim(data[[i]])[2]){
+        datainfo[i,] <- datainfo[i,]
+      }else{
+        temp <- c(datainfo[i,3], datainfo[i,4])
+        datainfo[i,3] <- temp[2]
+        datainfo[i,4] <- temp[1]
+      }
+    }
     ## 2. iNterpolation/ Extrapolation
-    data_long <- lapply(data, function(tab){
+    data_long <- lapply(data_new, function(tab){
       as.matrix(tab)%>%c()}
     )
     if(0 %in% q){
@@ -332,11 +342,11 @@ iNEXT.link <- function(data, diversity = 'TD', q = c(0,1,2), size = NULL,
                                        nboot = nboot, knots = knots, endpoint = endpoint, size = size)
       INEXT_est_0[[2]]$coverage_based <- INEXT_est_0[[2]]$coverage_based[INEXT_est_0[[2]]$coverage_based$Order.q == 0,]
       
-      asy_size <- sapply(1:length(data) ,function(i) coverage_to_size(data[[i]], 0.999, datatype = "abundance"))
-      new_size <- lapply(1:length(data) ,function(i) round(seq(2*sum(data[[i]]),asy_size[i], length = 5)))
-      size_check <-  check.size(data, datatype="abundance", size =size, endpoint=endpoint, knots=knots)
+      asy_size <- sapply(1:length(data_new) ,function(i) coverage_to_size(data_new[[i]], 0.999, datatype = "abundance"))
+      new_size <- lapply(1:length(data_new) ,function(i) round(seq(2*sum(data_new[[i]]),asy_size[i], length = 5)))
+      size_check <-  check.size(data_new, datatype="abundance", size =size, endpoint=endpoint, knots=knots)
       size <- list()
-      for(i in 1:length(data)){
+      for(i in 1:length(data_new)){
         size[[i]] <- unique(c(size_check[[i]], new_size[[i]]))
       }
       INEXT_est_q <- iNEXT.3D::iNEXT3D(data_long, diversity = 'TD', q = q[q!=0],conf = conf,
@@ -346,11 +356,11 @@ iNEXT.link <- function(data, diversity = 'TD', q = c(0,1,2), size = NULL,
       INEXT_est[[2]]$coverage_based <- INEXT_est[["TDiNextEst"]][["coverage_based"]][order(INEXT_est[["TDiNextEst"]][["coverage_based"]]$Assemblage),]
     }else{
       
-      asy_size <- sapply(1:length(data) ,function(i) coverage_to_size(data[[i]], 0.999, datatype = "abundance"))
-      new_size <- lapply(1:length(data) ,function(i) round(seq(2*sum(data[[i]]),asy_size[i], length = 5)))
-      size_check <-  check.size(data, datatype="abundance", size =size, endpoint=endpoint, knots=knots)
+      asy_size <- sapply(1:length(data_new) ,function(i) coverage_to_size(data_new[[i]], 0.999, datatype = "abundance"))
+      new_size <- lapply(1:length(data_new) ,function(i) round(seq(2*sum(data_new[[i]]),asy_size[i], length = 5)))
+      size_check <-  check.size(data_new, datatype="abundance", size =size, endpoint=endpoint, knots=knots)
       size <- list()
-      for(i in 1:length(data)){
+      for(i in 1:length(data_new)){
         size[[i]] <- unique(c(size_check[[i]], new_size[[i]]))
       }
       INEXT_est <- iNEXT.3D::iNEXT3D(data_long, diversity = 'TD', q = q,conf = conf,
@@ -401,12 +411,33 @@ iNEXT.link <- function(data, diversity = 'TD', q = c(0,1,2), size = NULL,
                                endpoint = endpoint, knots = knots, conf = conf,
                                nboot = nboot,col.tree = col.tree,row.tree = row.tree, type = PDtype)
     }
+    datainfo = DataInfo.link(data = data_new, diversity = "PD", col.tree = col.tree, row.tree = row.tree)
+    for(i in 1:length(data)){
+      if(dim(data_new[[i]])[1] == dim(data[[i]])[1] & dim(data_new[[i]])[2] == dim(data[[i]])[2]){
+        datainfo[i,] <- datainfo[i,]
+      }else{
+        temp <- c(datainfo[i,3], datainfo[i,4])
+        datainfo[i,3] <- temp[2]
+        datainfo[i,4] <- temp[1]
+      }
+    }
     res = INEXT_est
+    res[[1]] <- datainfo
     res$PDiNextEst$size_based <- rename(res$PDiNextEst$size_based, c(qiPD = "qPD",qiPD.LCL = "qPD.LCL", qiPD.UCL = "qPD.UCL"))
     res$PDiNextEst$coverage_based <- rename(res$PDiNextEst$coverage_based, c(qiPD = "qPD",qiPD.LCL = "qPD.LCL", qiPD.UCL = "qPD.UCL"))
     names(res[[3]])[c(2:4,6:7)] <- c("qiPD", "PD_obs", "PD_asy", "qiPD.LCL", "qiPD.UCL")
 
   }else if (diversity == "FD" & FDtype == "tau_values") {
+    datainfo = DataInfo.link(data = data_new, diversity = "FD", col.distM = col.distM, row.distM = row.distM,)
+    for(i in 1:length(data)){
+      if(dim(data_new[[i]])[1] == dim(data[[i]])[1] & dim(data_new[[i]])[2] == dim(data[[i]])[2]){
+        datainfo[i,] <- datainfo[i,]
+      }else{
+        temp <- c(datainfo[i,3], datainfo[i,4])
+        datainfo[i,3] <- temp[2]
+        datainfo[i,4] <- temp[1]
+      }
+    }
     if(0 %in% q){
       INEXT_est_0 <- iNEXTlinkFD(data, q = q, size = size,
                                  endpoint = endpoint, knots = knots, conf = conf,
@@ -477,7 +508,7 @@ iNEXT.link <- function(data, diversity = 'TD', q = c(0,1,2), size = NULL,
                                 nboot = nboot, nT = nT, row.distM = row.distM, col.distM = col.distM)
     }
     res = INEXT_est
-    res[[1]] <- DataInfo.link(data, diversity = 'FD', row.distM = row.distM, col.distM = col.distM)
+    res[[1]] <- datainfo
     res$FDiNextEst$size_based <- rename(res$FDiNextEst$size_based, c(qiFD = "qFD",qiFD.LCL = "qFD.LCL", qiFD.UCL = "qFD.UCL"))
     res$FDiNextEst$coverage_based <- rename(res$FDiNextEst$coverage_based, c(qiFD = "qFD",qiFD.LCL = "qFD.LCL", qiFD.UCL = "qFD.UCL"))
     names(res[[3]])[c(2:4,6:7)] <- c("qiFD", "FD_obs", "FD_asy", "qiFD.LCL", "qiFD.UCL")
