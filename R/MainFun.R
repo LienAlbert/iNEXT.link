@@ -505,7 +505,24 @@ iNEXT.link <- function(data, diversity = 'TD', q = c(0,1,2), size = NULL,
     res$FDiNextEst$coverage_based <- rename(res$FDiNextEst$coverage_based, c(qiFD = "qFD",qiFD.LCL = "qFD.LCL", qiFD.UCL = "qFD.UCL"))
   }
   else if (diversity == "FD" & FDtype == "AUC") {
-    datainfo = DataInfo.link(data = data_new, diversity = "FD", row.distM = row.distM, col.distM = col.distM)
+    datainfo = DataInfo.link(data = data, diversity = "FD", row.distM = row.distM, col.distM = col.distM)
+    if(names(data[[1]])[1] == names(data_new[[1]])[1]){
+      row.tree = row.tree
+      col.tree = col.tree
+      row.distM = row.distM
+      col.distM = col.distM
+    }else{
+      #change tree
+      rowtree = row.tree
+      coltree = col.tree
+      row.tree = coltree
+      col.tree = rowtree
+      #change distM
+      rowdistM = row.distM
+      coldistM = col.distM
+      row.distM = coldistM
+      col.distM = rowdistM
+    }
     if(0 %in% q){
       INEXT_est_0 <- iNEXTlinkAUC(data_new, q = q, size = size,
                                   endpoint = endpoint, knots = knots, conf = conf,
