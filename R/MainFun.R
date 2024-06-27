@@ -404,6 +404,7 @@ iNEXT.link <- function(data, diversity = 'TD', q = c(0,1,2), size = NULL,
     res$TDiNextEst$coverage_based <- rename(res$TDiNextEst$coverage_based, c(qiTD = "qTD",qiTD.LCL = "qTD.LCL", qiTD.UCL = "qTD.UCL"))
 
   }else if(diversity == 'PD'){
+    datainfo = DataInfo.link(data = data_new, diversity = "PD", row.tree = row.tree, col.tree = col.tree)
 
     if(!is.null(row.tree)){row.tree$tip.label = gsub('\\.', '_',row.tree$tip.label)}
     if(!is.null(col.tree)){col.tree$tip.label = gsub('\\.', '_',col.tree$tip.label)}
@@ -441,11 +442,13 @@ iNEXT.link <- function(data, diversity = 'TD', q = c(0,1,2), size = NULL,
                                nboot = nboot,col.tree = col.tree,row.tree = row.tree, type = PDtype)
     }
     res = INEXT_est
+    res[[1]] <- datainfo
     res$PDiNextEst$size_based <- rename(res$PDiNextEst$size_based, c(qiPD = "qPD",qiPD.LCL = "qPD.LCL", qiPD.UCL = "qPD.UCL"))
     res$PDiNextEst$coverage_based <- rename(res$PDiNextEst$coverage_based, c(qiPD = "qPD",qiPD.LCL = "qPD.LCL", qiPD.UCL = "qPD.UCL"))
     names(res[[3]])[c(2:4,6:7)] <- c("qiPD", "PD_obs", "PD_asy", "qiPD.LCL", "qiPD.UCL")
 
   }else if (diversity == "FD" & FDtype == "tau_values") {
+    datainfo = DataInfo.link(data = data_new, diversity = "FD", row.distM = row.distM, col.distM = col.distM)
     if(0 %in% q){
       INEXT_est_0 <- iNEXTlinkFD(data_new, q = q, size = size,
                                  endpoint = endpoint, knots = knots, conf = conf,
@@ -483,6 +486,7 @@ iNEXT.link <- function(data, diversity = 'TD', q = c(0,1,2), size = NULL,
     res$FDiNextEst$coverage_based <- rename(res$FDiNextEst$coverage_based, c(qiFD = "qFD",qiFD.LCL = "qFD.LCL", qiFD.UCL = "qFD.UCL"))
   }
   else if (diversity == "FD" & FDtype == "AUC") {
+    datainfo = DataInfo.link(data = data_new, diversity = "FD", row.distM = row.distM, col.distM = col.distM)
     if(0 %in% q){
       INEXT_est_0 <- iNEXTlinkAUC(data_new, q = q, size = size,
                                   endpoint = endpoint, knots = knots, conf = conf,
@@ -516,6 +520,7 @@ iNEXT.link <- function(data, diversity = 'TD', q = c(0,1,2), size = NULL,
                                 nboot = nboot, nT = nT, row.distM = row.distM, col.distM = col.distM)
     }
     res = INEXT_est
+    res[[1]] <- datainfo
     res$FDiNextEst$size_based <- rename(res$FDiNextEst$size_based, c(qiFD = "qFD",qiFD.LCL = "qFD.LCL", qiFD.UCL = "qFD.UCL"))
     res$FDiNextEst$coverage_based <- rename(res$FDiNextEst$coverage_based, c(qiFD = "qFD",qiFD.LCL = "qFD.LCL", qiFD.UCL = "qFD.UCL"))
     names(res[[3]])[c(2:4,6:7)] <- c("qiFD", "FD_obs", "FD_asy", "qiFD.LCL", "qiFD.UCL")
