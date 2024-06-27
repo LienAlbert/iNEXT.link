@@ -411,18 +411,7 @@ iNEXT.link <- function(data, diversity = 'TD', q = c(0,1,2), size = NULL,
                                endpoint = endpoint, knots = knots, conf = conf,
                                nboot = nboot,col.tree = col.tree,row.tree = row.tree, type = PDtype)
     }
-    datainfo = DataInfo.link(data = data_new, diversity = "PD", col.tree = col.tree, row.tree = row.tree)
-    for(i in 1:length(data)){
-      if(dim(data_new[[i]])[1] == dim(data[[i]])[1] & dim(data_new[[i]])[2] == dim(data[[i]])[2]){
-        datainfo[i,] <- datainfo[i,]
-      }else{
-        temp <- c(datainfo[i,3], datainfo[i,4])
-        datainfo[i,3] <- temp[2]
-        datainfo[i,4] <- temp[1]
-      }
-    }
     res = INEXT_est
-    res[[1]] <- datainfo
     res$PDiNextEst$size_based <- rename(res$PDiNextEst$size_based, c(qiPD = "qPD",qiPD.LCL = "qPD.LCL", qiPD.UCL = "qPD.UCL"))
     res$PDiNextEst$coverage_based <- rename(res$PDiNextEst$coverage_based, c(qiPD = "qPD",qiPD.LCL = "qPD.LCL", qiPD.UCL = "qPD.UCL"))
     names(res[[3]])[c(2:4,6:7)] <- c("qiPD", "PD_obs", "PD_asy", "qiPD.LCL", "qiPD.UCL")
@@ -508,7 +497,6 @@ iNEXT.link <- function(data, diversity = 'TD', q = c(0,1,2), size = NULL,
                                 nboot = nboot, nT = nT, row.distM = row.distM, col.distM = col.distM)
     }
     res = INEXT_est
-    res[[1]] <- datainfo
     res$FDiNextEst$size_based <- rename(res$FDiNextEst$size_based, c(qiFD = "qFD",qiFD.LCL = "qFD.LCL", qiFD.UCL = "qFD.UCL"))
     res$FDiNextEst$coverage_based <- rename(res$FDiNextEst$coverage_based, c(qiFD = "qFD",qiFD.LCL = "qFD.LCL", qiFD.UCL = "qFD.UCL"))
     names(res[[3]])[c(2:4,6:7)] <- c("qiFD", "FD_obs", "FD_asy", "qiFD.LCL", "qiFD.UCL")
