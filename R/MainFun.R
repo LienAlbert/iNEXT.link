@@ -57,22 +57,22 @@ DataInfo.link <- function(data, diversity = 'TD', row.tree = NULL, col.tree = NU
     if(!is.null(row.tree)){row.tree$tip.label = gsub('\\.', '_',row.tree$tip.label)}
     if(!is.null(col.tree)){col.tree$tip.label = gsub('\\.', '_',col.tree$tip.label)}
 
-    table <- lapply(data, function(y){datainfphy(data = y, datatype = datatype,
+    table <- lapply(data_new, function(y){datainfphy(data = y, datatype = datatype,
                                                  row.tree = row.tree,col.tree = col.tree)})%>%
       do.call(rbind,.)
-    rownames(table) <- names(data)
+    rownames(table) <- names(data_new)
     table = tibble::rownames_to_column(table, var = "Networks")
   }else if(diversity == 'TD'){
-    table <- lapply(data, function(y){datainf(data = y, datatype = datatype)})%>%do.call(rbind,.)
-    rownames(table) <- names(data)
+    table <- lapply(data_new, function(y){datainf(data = y, datatype = datatype)})%>%do.call(rbind,.)
+    rownames(table) <- names(data_new)
     table = tibble::rownames_to_column(table, var = "Networks")
   }else if(diversity == 'FD'){
 
 
-    table <- lapply(data, function(y){datainffun(data = y, datatype = datatype,
+    table <- lapply(data_new, function(y){datainffun(data = y, datatype = datatype,
                                                  row.distM = row.distM,col.distM = col.distM)})%>%
       do.call(rbind,.)
-    rownames(table) <- names(data)
+    rownames(table) <- names(data_new)
     table = tibble::rownames_to_column(table, var = "Networks")
   }
   for(i in 1:length(data)){
