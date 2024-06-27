@@ -47,6 +47,18 @@ DataInfo.link <- function(data, diversity = 'TD', row.tree = NULL, col.tree = NU
   for(i in 1:length(data)){
     if(nrow(data[[i]]) > ncol(data[[i]])){
       data_new[[i]] <- as.data.frame(t(data[[i]]))
+      #change tree
+      rowtree <- row.tree
+      coltree <- col.tree
+      row.tree <- coltree
+      col.tree <- rowtree
+      
+      #change distM
+      rowdistM <- row.distM
+      coldistM <- col.distM
+      row.distM <- coldistM
+      col.distM <- rowdistM
+      
     }else{
       data_new[[i]] <- data[[i]]
     }
@@ -417,16 +429,6 @@ iNEXT.link <- function(data, diversity = 'TD', q = c(0,1,2), size = NULL,
     names(res[[3]])[c(2:4,6:7)] <- c("qiPD", "PD_obs", "PD_asy", "qiPD.LCL", "qiPD.UCL")
 
   }else if (diversity == "FD" & FDtype == "tau_values") {
-    datainfo = DataInfo.link(data = data_new, diversity = "FD", col.distM = col.distM, row.distM = row.distM,)
-    for(i in 1:length(data)){
-      if(dim(data_new[[i]])[1] == dim(data[[i]])[1] & dim(data_new[[i]])[2] == dim(data[[i]])[2]){
-        datainfo[i,] <- datainfo[i,]
-      }else{
-        temp <- c(datainfo[i,3], datainfo[i,4])
-        datainfo[i,3] <- temp[2]
-        datainfo[i,4] <- temp[1]
-      }
-    }
     if(0 %in% q){
       INEXT_est_0 <- iNEXTlinkFD(data, q = q, size = size,
                                  endpoint = endpoint, knots = knots, conf = conf,
@@ -464,6 +466,16 @@ iNEXT.link <- function(data, diversity = 'TD', q = c(0,1,2), size = NULL,
     res$FDiNextEst$coverage_based <- rename(res$FDiNextEst$coverage_based, c(qiFD = "qFD",qiFD.LCL = "qFD.LCL", qiFD.UCL = "qFD.UCL"))
   }
   else if (diversity == "FD" & FDtype == "AUC") {
+    datainfo = DataInfo.link(data = data, diversity = "FD", col.distM = col.distM, row.distM = row.distM,)
+    for(i in 1:length(data)){
+      if(dim(data_new[[i]])[1] == dim(data[[i]])[1] & dim(data_new[[i]])[2] == dim(data[[i]])[2]){
+        datainfo[i,] <- datainfo[i,]
+      }else{
+        temp <- c(datainfo[i,3], datainfo[i,4])
+        datainfo[i,3] <- temp[2]
+        datainfo[i,4] <- temp[1]
+      }
+    }
     if(0 %in% q){
       INEXT_est_0 <- iNEXTlinkAUC(data, q = q, size = size,
                                   endpoint = endpoint, knots = knots, conf = conf,
