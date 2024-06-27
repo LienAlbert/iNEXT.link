@@ -315,23 +315,7 @@ iNEXT.link <- function(data, diversity = 'TD', q = c(0,1,2), size = NULL,
     }
   }
   
-  if(names(data[[1]])[1] == names(data_new[[1]])[1]){
-    row.tree = row.tree
-    col.tree = col.tree
-    row.distM = row.distM
-    col.distM = col.distM
-  }else{
-    #change tree
-    rowtree = row.tree
-    coltree = col.tree
-    row.tree = coltree
-    col.tree = rowtree
-    #change distM
-    rowdistM = row.distM
-    coldistM = col.distM
-    row.distM = coldistM
-    col.distM = rowdistM
-  }
+  
   
   # User interface
   TYPE <- c("abundance", "incidence", "incidence_freq", "incidence_raw")
@@ -361,7 +345,7 @@ iNEXT.link <- function(data, diversity = 'TD', q = c(0,1,2), size = NULL,
   res = list()
   if(diversity == 'TD'){
     ## 1. datainfo
-    datainfo = DataInfo.link(data = data_new, diversity = "TD")
+    datainfo = DataInfo.link(data = data, diversity = "TD")
     ## 2. iNterpolation/ Extrapolation
     data_long <- lapply(data_new, function(tab){
       as.matrix(tab)%>%c()}
@@ -404,7 +388,24 @@ iNEXT.link <- function(data, diversity = 'TD', q = c(0,1,2), size = NULL,
     res$TDiNextEst$coverage_based <- rename(res$TDiNextEst$coverage_based, c(qiTD = "qTD",qiTD.LCL = "qTD.LCL", qiTD.UCL = "qTD.UCL"))
 
   }else if(diversity == 'PD'){
-    datainfo = DataInfo.link(data = data_new, diversity = "PD", row.tree = row.tree, col.tree = col.tree)
+    datainfo = DataInfo.link(data = data, diversity = "PD", row.tree = row.tree, col.tree = col.tree)
+    if(names(data[[1]])[1] == names(data_new[[1]])[1]){
+      row.tree = row.tree
+      col.tree = col.tree
+      row.distM = row.distM
+      col.distM = col.distM
+    }else{
+      #change tree
+      rowtree = row.tree
+      coltree = col.tree
+      row.tree = coltree
+      col.tree = rowtree
+      #change distM
+      rowdistM = row.distM
+      coldistM = col.distM
+      row.distM = coldistM
+      col.distM = rowdistM
+    }
 
     if(!is.null(row.tree)){row.tree$tip.label = gsub('\\.', '_',row.tree$tip.label)}
     if(!is.null(col.tree)){col.tree$tip.label = gsub('\\.', '_',col.tree$tip.label)}
@@ -448,7 +449,24 @@ iNEXT.link <- function(data, diversity = 'TD', q = c(0,1,2), size = NULL,
     names(res[[3]])[c(2:4,6:7)] <- c("qiPD", "PD_obs", "PD_asy", "qiPD.LCL", "qiPD.UCL")
 
   }else if (diversity == "FD" & FDtype == "tau_values") {
-    datainfo = DataInfo.link(data = data_new, diversity = "FD", row.distM = row.distM, col.distM = col.distM)
+    datainfo = DataInfo.link(data = data, diversity = "FD", row.distM = row.distM, col.distM = col.distM)
+    if(names(data[[1]])[1] == names(data_new[[1]])[1]){
+      row.tree = row.tree
+      col.tree = col.tree
+      row.distM = row.distM
+      col.distM = col.distM
+    }else{
+      #change tree
+      rowtree = row.tree
+      coltree = col.tree
+      row.tree = coltree
+      col.tree = rowtree
+      #change distM
+      rowdistM = row.distM
+      coldistM = col.distM
+      row.distM = coldistM
+      col.distM = rowdistM
+    }
     if(0 %in% q){
       INEXT_est_0 <- iNEXTlinkFD(data_new, q = q, size = size,
                                  endpoint = endpoint, knots = knots, conf = conf,
@@ -482,6 +500,7 @@ iNEXT.link <- function(data, diversity = 'TD', q = c(0,1,2), size = NULL,
                                 nboot = nboot, nT = nT, row.distM = row.distM, col.distM = col.distM)
     }
     res = INEXT_est
+    res[[1]] <- datainfo
     res$FDiNextEst$size_based <- rename(res$FDiNextEst$size_based, c(qiFD = "qFD",qiFD.LCL = "qFD.LCL", qiFD.UCL = "qFD.UCL"))
     res$FDiNextEst$coverage_based <- rename(res$FDiNextEst$coverage_based, c(qiFD = "qFD",qiFD.LCL = "qFD.LCL", qiFD.UCL = "qFD.UCL"))
   }
