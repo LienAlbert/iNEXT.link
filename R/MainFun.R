@@ -50,6 +50,7 @@ DataInfo.link <- function(data, diversity = 'TD', row.tree = NULL, col.tree = NU
       names(data_new)[i] <- names(data)[i]
     }else{
       data_new[[i]] <- data[[i]]
+      names(data_new)[i] <- names(data)[i]
     }
   }
   
