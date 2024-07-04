@@ -1543,7 +1543,16 @@ Spec.link <- function(data, q = seq(0, 2, 0.2),
   if (diversity == 'TD'){
     long = lapply(data, function(da){da%>%as.data.frame()%>%gather(key = "col_sp", value = "abundance")%>%.[,2]})
     
-    if (is.null(SC)) SC = sapply(long, function(x) iNEXT.3D:::Coverage(x, datatype = 'abundance', 2 * sum(x))) %>% min
+    if(method == "Estimated"){
+      if (is.null(SC)) SC = sapply(long, function(x) iNEXT.3D:::Coverage(x, datatype = 'abundance', 2 * sum(x))) %>% min
+    }else{
+      if(is.null(SC)){
+        SC = DataInfo.link(data, diversity="TD")$Coverage
+      }else{
+        SC =SC  
+        }
+    }
+    
     
     Spec <- lapply(E.class, function(e){
       each_class = lapply(seq_along(long), function(i){
@@ -1569,22 +1578,23 @@ Spec.link <- function(data, q = seq(0, 2, 0.2),
     
     if (method == "Estimated") {
       Spec <- lapply(Spec, function(x) x %>% mutate('SC' = SC))
+      for(i in 1:length(E.class)){
+        Spec[[i]][,4:5] <- Spec[[i]][,c(5,4)]
+        names(Spec[[i]])[4:5] <- c("Spec.LCL", "Spec.UCL")
+        names(Spec[[i]])[8:9] <- c("Dataset", "Measure")
+        Spec[[i]]$Method <- NULL
+      }
+    }else{
+      Spec <- lapply(Spec, function(x) x %>% mutate('SC' = as.vector(sapply(SC, function(y) rep(y,length(q))))))
+      for(i in 1:length(E.class)){
+        Spec[[i]][,4:5] <- Spec[[i]][,c(5,4)]
+        names(Spec[[i]])[4:5] <- c("Spec.LCL", "Spec.UCL")
+        names(Spec[[i]])[7:8] <- c("Dataset", "Measure")
+        Spec[[i]]$Method <- NULL
+      }
     }
     
-    for(i in 1:5){
-      Spec[[i]][,4:5] <- Spec[[i]][,c(5,4)]
-      names(Spec[[i]])[4:5] <- c("Spec.LCL", "Spec.UCL")
-    }
-    names(Spec[[1]])[8:9] <- c("Dataset", "Measure")
-    names(Spec[[2]])[8:9] <- c("Dataset", "Measure")
-    names(Spec[[3]])[8:9] <- c("Dataset", "Measure")
-    names(Spec[[4]])[8:9] <- c("Dataset", "Measure")
-    names(Spec[[5]])[8:9] <- c("Dataset", "Measure")
-    Spec[[1]]$Method <- NULL
-    Spec[[2]]$Method <- NULL
-    Spec[[3]]$Method <- NULL
-    Spec[[4]]$Method <- NULL
-    Spec[[5]]$Method <- NULL
+    
     
     return(Spec)
 
