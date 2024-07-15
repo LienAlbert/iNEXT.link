@@ -1192,7 +1192,7 @@ estimateD.link = function(data, diversity = 'TD', q = c(0, 1, 2), base = "covera
 #' @export
 
 iNEXTbeta.link = function(data, diversity = 'TD', level = NULL,
-                          q = c(0, 1, 2), nboot = 20, conf = 0.95, 
+                          q = c(0, 1, 2), nboot = 20, conf = 0.95, comparison = 'pool',
                           row.tree = NULL, col.tree = NULL, PDtype = 'meanPD', row.distM = NULL, col.distM = NULL,
                           FDtype = "AUC", FDtau = NULL, FDcut_number = 30){
   
@@ -1215,16 +1215,17 @@ iNEXTbeta.link = function(data, diversity = 'TD', level = NULL,
     return(long)
   })
 
-  if(diversity == 'TD'){
+  if(comparison = 'pool'){
+    if(diversity == 'TD'){
     
     dissimilarity <- iNEXTbeta3D(data = combined_list, diversity = 'TD',level = level, datatype = datatype,
                                  q = q ,nboot = nboot, conf = conf)
     
   }else if(diversity == 'PD'){
-
+    
     if(!is.null(row.tree)){row.tree$tip.label = gsub('\\.', '_',row.tree$tip.label)}
     if(!is.null(col.tree)){col.tree$tip.label = gsub('\\.', '_',col.tree$tip.label)}
-
+    
     dissimilarity = iNEXTbeta.PDlink(data = combined_list, level = level, datatype = datatype,
                                      q = q ,row.tree = row.tree,col.tree = col.tree, nboot = nboot, PDtype = PDtype)
     class(dissimilarity) = 'iNEXTbeta3D'
@@ -1237,12 +1238,12 @@ iNEXTbeta.link = function(data, diversity = 'TD', level = NULL,
         row_sp = c(row_sp,rownames(dat[[i]][[j]]))
         col_sp = c(col_sp,colnames(dat[[i]][[j]]))
       }
-
-
+      
+      
     }
     row_num = length(unique(row_sp))
     col_num = length(unique(col_sp))
-
+    
     if(is.null(row.distM)){
       rdd = matrix(1,ncol = row_num,nrow = row_num)
       diag(rdd) = 0
@@ -1257,12 +1258,12 @@ iNEXTbeta.link = function(data, diversity = 'TD', level = NULL,
       col.distM =  cdd}
     row.distM = as.matrix(row.distM)
     col.distM = as.matrix(col.distM)
-
+    
     distM =  1-(1-row.distM[rep(1:nrow(row.distM),rep(nrow(col.distM),nrow(row.distM))),rep(1:nrow(row.distM),rep(nrow(col.distM),nrow(row.distM)))])*(1-col.distM[rep(1:nrow(col.distM),nrow(row.distM)),rep(1:nrow(col.distM),nrow(row.distM))])
     distM_name = paste0(rep(rownames(row.distM),rep(ncol(col.distM),nrow(row.distM))),"*",rep(colnames(col.distM),3))
     colnames(distM) = distM_name
     rownames(distM) = distM_name
-
+    
     dissimilarity <- iNEXTbeta3D(data = combined_list, diversity = 'FD',level = level, datatype = datatype,
                                  q = q ,nboot = nboot, conf = conf, FDdistM = distM, FDtype = "tau_value", FDtau = FDtau)
     
@@ -1275,12 +1276,12 @@ iNEXTbeta.link = function(data, diversity = 'TD', level = NULL,
         row_sp = c(row_sp,rownames(dat[[i]][[j]]))
         col_sp = c(col_sp,colnames(dat[[i]][[j]]))
       }
-
-
+      
+      
     }
     row_num = length(unique(row_sp))
     col_num = length(unique(col_sp))
-
+    
     if(is.null(row.distM)){
       rdd = matrix(1,ncol = row_num,nrow = row_num)
       diag(rdd) = 0
@@ -1293,28 +1294,230 @@ iNEXTbeta.link = function(data, diversity = 'TD', level = NULL,
       rownames(cdd) = unique(col_sp)
       colnames(cdd) = unique(col_sp)
       col.distM =  cdd}
-
-
+    
+    
     row.distM = as.matrix(row.distM)
     col.distM = as.matrix(col.distM)
-
+    
     distM = 1-(1-row.distM[rep(1:nrow(row.distM),rep(nrow(col.distM),nrow(row.distM))),rep(1:nrow(row.distM),rep(nrow(col.distM),nrow(row.distM)))])*(1-col.distM[rep(1:nrow(col.distM),nrow(row.distM)),rep(1:nrow(col.distM),nrow(row.distM))])
     distM_name = paste0(rep(rownames(row.distM),rep(ncol(col.distM),nrow(row.distM))),"*",rep(colnames(col.distM),3))
     colnames(distM) = distM_name
     rownames(distM) = distM_name
-
-
+    
+    
     dissimilarity <- iNEXTbeta3D(data = combined_list, diversity = 'FD', level = level, datatype = datatype,
                                  q = q ,nboot = nboot, conf = conf, FDdistM = distM, FDcut_number = FDcut_number)
   }
-  
-  dissimilarity[[1]]$gamma$Dataset <- paste(names(combined_list[[1]]),collapse = " vs. ")
-  dissimilarity[[1]]$alpha$Dataset <- paste(names(combined_list[[1]]),collapse = " vs. ")
-  dissimilarity[[1]]$beta$Dataset <- paste(names(combined_list[[1]]),collapse = " vs. ")
-  dissimilarity[[1]]$`1-C`$Dataset <- paste(names(combined_list[[1]]),collapse = " vs. ")
-  dissimilarity[[1]]$`1-U`$Dataset <- paste(names(combined_list[[1]]),collapse = " vs. ")
-  dissimilarity[[1]]$`1-V`$Dataset <- paste(names(combined_list[[1]]),collapse = " vs. ")
-  dissimilarity[[1]]$`1-S`$Dataset <- paste(names(combined_list[[1]]),collapse = " vs. ")
+    dissimilarity[[1]]$gamma$Dataset <- paste(names(combined_list[[1]]),collapse = " vs. ")
+    dissimilarity[[1]]$alpha$Dataset <- paste(names(combined_list[[1]]),collapse = " vs. ")
+    dissimilarity[[1]]$beta$Dataset <- paste(names(combined_list[[1]]),collapse = " vs. ")
+    dissimilarity[[1]]$`1-C`$Dataset <- paste(names(combined_list[[1]]),collapse = " vs. ")
+    dissimilarity[[1]]$`1-U`$Dataset <- paste(names(combined_list[[1]]),collapse = " vs. ")
+    dissimilarity[[1]]$`1-V`$Dataset <- paste(names(combined_list[[1]]),collapse = " vs. ")
+    dissimilarity[[1]]$`1-S`$Dataset <- paste(names(combined_list[[1]]),collapse = " vs. ")
+  }else{
+    t <- length(names(combined_list[[1]]))
+    dis <- list()
+    if(diversity == 'TD'){
+      for(i in 1:(t-1)){
+        for(j in (i+1):t){
+          com_list <- combined_list[[1]][,c(i,j)]
+          dis_test <- iNEXTbeta3D(data = com_list, diversity = 'TD',level = level, datatype = datatype,
+                                  q = q ,nboot = nboot, conf = conf)
+          names(dis_test) <- paste(names(com_list),collapse = " vs. ")
+          dis_test[[1]]$gamma$Dataset <- paste(names(com_list),collapse = " vs. ")
+          dis_test[[1]]$alpha$Dataset <- paste(names(com_list),collapse = " vs. ")
+          dis_test[[1]]$beta$Dataset <- paste(names(com_list),collapse = " vs. ")
+          dis_test[[1]]$`1-C`$Dataset <- paste(names(com_list),collapse = " vs. ")
+          dis_test[[1]]$`1-U`$Dataset <- paste(names(com_list),collapse = " vs. ")
+          dis_test[[1]]$`1-V`$Dataset <- paste(names(com_list),collapse = " vs. ")
+          dis_test[[1]]$`1-S`$Dataset <- paste(names(com_list),collapse = " vs. ")
+          dis <- c(dis, dis_test)
+          
+        }
+      }
+      dissimilarity <- list(Dataset_1 = list())
+      for(i in 1:7){
+        for(j in 1:length(dis)){
+          if(j == 1){
+            dissimilarity[[1]][[i]] <-  dis[[j]][[i]]
+          }else{
+            dissimilarity[[1]][[i]] <- rbind(dissimilarity[[1]][[i]], dis[[j]][[i]]) 
+          }
+        }
+        names(dissimilarity[[1]])[i] <- names(dis[[1]])[i]
+      }
+      
+      
+    }else if(diversity == 'PD'){
+      
+      if(!is.null(row.tree)){row.tree$tip.label = gsub('\\.', '_',row.tree$tip.label)}
+      if(!is.null(col.tree)){col.tree$tip.label = gsub('\\.', '_',col.tree$tip.label)}
+      
+      for(i in 1:(t-1)){
+        for(j in (i+1):t){
+          com_list <- combined_list[[1]][,c(i,j)]
+          dis_test <- iNEXTbeta.PDlink(data = combined_list, level = level, datatype = datatype,
+                                       q = q ,row.tree = row.tree,col.tree = col.tree, nboot = nboot, PDtype = PDtype)
+          names(dis_test) <- paste(names(com_list),collapse = " vs. ")
+          dis_test[[1]]$gamma$Dataset <- paste(names(com_list),collapse = " vs. ")
+          dis_test[[1]]$alpha$Dataset <- paste(names(com_list),collapse = " vs. ")
+          dis_test[[1]]$beta$Dataset <- paste(names(com_list),collapse = " vs. ")
+          dis_test[[1]]$`1-C`$Dataset <- paste(names(com_list),collapse = " vs. ")
+          dis_test[[1]]$`1-U`$Dataset <- paste(names(com_list),collapse = " vs. ")
+          dis_test[[1]]$`1-V`$Dataset <- paste(names(com_list),collapse = " vs. ")
+          dis_test[[1]]$`1-S`$Dataset <- paste(names(com_list),collapse = " vs. ")
+          dis <- c(dis, dis_test)
+          
+        }
+      }
+      dissimilarity <- list(Dataset_1 = list())
+      for(i in 1:7){
+        for(j in 1:length(dis)){
+          if(j == 1){
+            dissimilarity[[1]][[i]] <-  dis[[j]][[i]]
+          }else{
+            dissimilarity[[1]][[i]] <- rbind(dissimilarity[[1]][[i]], dis[[j]][[i]]) 
+          }
+        }
+        names(dissimilarity[[1]])[i] <- names(dis[[1]])[i]
+      }
+      
+      class(dissimilarity) = 'iNEXTbeta3D'
+      
+    }else if(diversity == 'FD' & FDtype == 'tau_value'){
+      row_sp = c()
+      col_sp = c()
+      for(i in 1:length(dat)){
+        for(j in 1:length(dat[[i]])){
+          row_sp = c(row_sp,rownames(dat[[i]][[j]]))
+          col_sp = c(col_sp,colnames(dat[[i]][[j]]))
+        }
+        
+        
+      }
+      row_num = length(unique(row_sp))
+      col_num = length(unique(col_sp))
+      
+      if(is.null(row.distM)){
+        rdd = matrix(1,ncol = row_num,nrow = row_num)
+        diag(rdd) = 0
+        rownames(rdd) = unique(row_sp)
+        colnames(rdd) = unique(row_sp)
+        row.distM =  rdd}
+      if(is.null(col.distM)){
+        cdd = matrix(1,ncol = col_num,nrow = col_num)
+        diag(cdd) = 0
+        rownames(cdd) = unique(col_sp)
+        colnames(cdd) = unique(col_sp)
+        col.distM =  cdd}
+      row.distM = as.matrix(row.distM)
+      col.distM = as.matrix(col.distM)
+      
+      distM =  1-(1-row.distM[rep(1:nrow(row.distM),rep(nrow(col.distM),nrow(row.distM))),rep(1:nrow(row.distM),rep(nrow(col.distM),nrow(row.distM)))])*(1-col.distM[rep(1:nrow(col.distM),nrow(row.distM)),rep(1:nrow(col.distM),nrow(row.distM))])
+      distM_name = paste0(rep(rownames(row.distM),rep(ncol(col.distM),nrow(row.distM))),"*",rep(colnames(col.distM),3))
+      colnames(distM) = distM_name
+      rownames(distM) = distM_name
+      
+      for(i in 1:(t-1)){
+        for(j in (i+1):t){
+          com_list <- combined_list[[1]][,c(i,j)]
+          dis_test <- iNEXTbeta3D(data = combined_list, diversity = 'FD',level = level, datatype = datatype,
+                                  q = q ,nboot = nboot, conf = conf, FDdistM = distM, FDtype = "tau_value", FDtau = FDtau)
+          names(dis_test) <- paste(names(com_list),collapse = " vs. ")
+          dis_test[[1]]$gamma$Dataset <- paste(names(com_list),collapse = " vs. ")
+          dis_test[[1]]$alpha$Dataset <- paste(names(com_list),collapse = " vs. ")
+          dis_test[[1]]$beta$Dataset <- paste(names(com_list),collapse = " vs. ")
+          dis_test[[1]]$`1-C`$Dataset <- paste(names(com_list),collapse = " vs. ")
+          dis_test[[1]]$`1-U`$Dataset <- paste(names(com_list),collapse = " vs. ")
+          dis_test[[1]]$`1-V`$Dataset <- paste(names(com_list),collapse = " vs. ")
+          dis_test[[1]]$`1-S`$Dataset <- paste(names(com_list),collapse = " vs. ")
+          dis <- c(dis, dis_test)
+          
+        }
+      }
+      dissimilarity <- list(Dataset_1 = list())
+      for(i in 1:7){
+        for(j in 1:length(dis)){
+          if(j == 1){
+            dissimilarity[[1]][[i]] <-  dis[[j]][[i]]
+          }else{
+            dissimilarity[[1]][[i]] <- rbind(dissimilarity[[1]][[i]], dis[[j]][[i]]) 
+          }
+        }
+        names(dissimilarity[[1]])[i] <- names(dis[[1]])[i]
+      }
+      
+      
+    }else if(diversity == 'FD' & FDtype == 'AUC'){
+      
+      row_sp = c()
+      col_sp = c()
+      for(i in 1:length(dat)){
+        for(j in 1:length(dat[[i]])){
+          row_sp = c(row_sp,rownames(dat[[i]][[j]]))
+          col_sp = c(col_sp,colnames(dat[[i]][[j]]))
+        }
+        
+        
+      }
+      row_num = length(unique(row_sp))
+      col_num = length(unique(col_sp))
+      
+      if(is.null(row.distM)){
+        rdd = matrix(1,ncol = row_num,nrow = row_num)
+        diag(rdd) = 0
+        rownames(rdd) = unique(row_sp)
+        colnames(rdd) = unique(row_sp)
+        row.distM =  rdd}
+      if(is.null(col.distM)){
+        cdd = matrix(1,ncol = col_num,nrow = col_num)
+        diag(cdd) = 0
+        rownames(cdd) = unique(col_sp)
+        colnames(cdd) = unique(col_sp)
+        col.distM =  cdd}
+      
+      
+      row.distM = as.matrix(row.distM)
+      col.distM = as.matrix(col.distM)
+      
+      distM = 1-(1-row.distM[rep(1:nrow(row.distM),rep(nrow(col.distM),nrow(row.distM))),rep(1:nrow(row.distM),rep(nrow(col.distM),nrow(row.distM)))])*(1-col.distM[rep(1:nrow(col.distM),nrow(row.distM)),rep(1:nrow(col.distM),nrow(row.distM))])
+      distM_name = paste0(rep(rownames(row.distM),rep(ncol(col.distM),nrow(row.distM))),"*",rep(colnames(col.distM),3))
+      colnames(distM) = distM_name
+      rownames(distM) = distM_name
+      
+      for(i in 1:(t-1)){
+        for(j in (i+1):t){
+          com_list <- combined_list[[1]][,c(i,j)]
+          dis_test <- iNEXTbeta3D(data = combined_list, diversity = 'FD', level = level, datatype = datatype,
+                                  q = q ,nboot = nboot, conf = conf, FDdistM = distM, FDcut_number = FDcut_number)
+          names(dis_test) <- paste(names(com_list),collapse = " vs. ")
+          dis_test[[1]]$gamma$Dataset <- paste(names(com_list),collapse = " vs. ")
+          dis_test[[1]]$alpha$Dataset <- paste(names(com_list),collapse = " vs. ")
+          dis_test[[1]]$beta$Dataset <- paste(names(com_list),collapse = " vs. ")
+          dis_test[[1]]$`1-C`$Dataset <- paste(names(com_list),collapse = " vs. ")
+          dis_test[[1]]$`1-U`$Dataset <- paste(names(com_list),collapse = " vs. ")
+          dis_test[[1]]$`1-V`$Dataset <- paste(names(com_list),collapse = " vs. ")
+          dis_test[[1]]$`1-S`$Dataset <- paste(names(com_list),collapse = " vs. ")
+          dis <- c(dis, dis_test)
+          
+        }
+      }
+      dissimilarity <- list(Dataset_1 = list())
+      for(i in 1:7){
+        for(j in 1:length(dis)){
+          if(j == 1){
+            dissimilarity[[1]][[i]] <-  dis[[j]][[i]]
+          }else{
+            dissimilarity[[1]][[i]] <- rbind(dissimilarity[[1]][[i]], dis[[j]][[i]]) 
+          }
+        }
+        names(dissimilarity[[1]])[i] <- names(dis[[1]])[i]
+      }
+      
+      
+    }
+    }
   return(dissimilarity)
 }
 
