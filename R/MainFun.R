@@ -1215,7 +1215,7 @@ iNEXTbeta.link = function(data, diversity = 'TD', level = NULL,
     return(long)
   })
 
-  if(comparison = 'pool'){
+  if(comparison == 'pool'){
     if(diversity == 'TD'){
     
     dissimilarity <- iNEXTbeta3D(data = combined_list, diversity = 'TD',level = level, datatype = datatype,
