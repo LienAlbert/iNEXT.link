@@ -1315,7 +1315,7 @@ iNEXTbeta.link = function(data, diversity = 'TD', level = NULL,
     dissimilarity[[1]]$`1-U`$Dataset <- paste(names(combined_list[[1]]),collapse = " vs. ")
     dissimilarity[[1]]$`1-V`$Dataset <- paste(names(combined_list[[1]]),collapse = " vs. ")
     dissimilarity[[1]]$`1-S`$Dataset <- paste(names(combined_list[[1]]),collapse = " vs. ")
-  }else{
+  }else if(comparison == 'pair'){
     t <- length(names(combined_list[[1]]))
     dis <- list()
     if(diversity == 'TD'){
