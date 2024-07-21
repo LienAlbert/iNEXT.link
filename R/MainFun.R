@@ -1359,7 +1359,7 @@ iNEXTbeta.link = function(data, diversity = 'TD', level = NULL,
       for(i in 1:(t-1)){
         for(j in (i+1):t){
           com_list <- combined_list[[1]][,c(i,j)]
-          dis_test <- iNEXTbeta.PDlink(data = combined_list, level = level, datatype = datatype,
+          dis_test <- iNEXTbeta.PDlink(data = com_list, level = level, datatype = datatype,
                                        q = q ,row.tree = row.tree,col.tree = col.tree, nboot = nboot, PDtype = PDtype)
           names(dis_test) <- paste(names(com_list),collapse = " vs. ")
           dis_test[[1]]$gamma$Dataset <- paste(names(com_list),collapse = " vs. ")
@@ -1424,7 +1424,7 @@ iNEXTbeta.link = function(data, diversity = 'TD', level = NULL,
       for(i in 1:(t-1)){
         for(j in (i+1):t){
           com_list <- combined_list[[1]][,c(i,j)]
-          dis_test <- iNEXTbeta3D(data = combined_list, diversity = 'FD',level = level, datatype = datatype,
+          dis_test <- iNEXTbeta3D(data = com_list, diversity = 'FD',level = level, datatype = datatype,
                                   q = q ,nboot = nboot, conf = conf, FDdistM = distM, FDtype = "tau_value", FDtau = FDtau)
           names(dis_test) <- paste(names(com_list),collapse = " vs. ")
           dis_test[[1]]$gamma$Dataset <- paste(names(com_list),collapse = " vs. ")
@@ -1491,7 +1491,7 @@ iNEXTbeta.link = function(data, diversity = 'TD', level = NULL,
       for(i in 1:(t-1)){
         for(j in (i+1):t){
           com_list <- combined_list[[1]][,c(i,j)]
-          dis_test <- iNEXTbeta3D(data = combined_list, diversity = 'FD', level = level, datatype = datatype,
+          dis_test <- iNEXTbeta3D(data = com_list, diversity = 'FD', level = level, datatype = datatype,
                                   q = q ,nboot = nboot, conf = conf, FDdistM = distM, FDcut_number = FDcut_number)
           names(dis_test) <- paste(names(com_list),collapse = " vs. ")
           dis_test[[1]]$gamma$Dataset <- paste(names(com_list),collapse = " vs. ")
