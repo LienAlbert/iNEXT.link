@@ -313,6 +313,7 @@ iNEXT.link <- function(data, diversity = 'TD', q = c(0,1,2), size = NULL,
       names(data_new)[i] <- names(data)[i]
     }else{
       data_new[[i]] <- data[[i]]
+      names(data_new)[i] <- names(data)[i]
     }
   }
   
